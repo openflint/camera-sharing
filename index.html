@@ -24,29 +24,32 @@
     <body>
         <article>
             <video  id="video" autoplay></video>
+            <button id="capture-screen">Capture Screen</button>
             <script>
                 navigator.getUserMedia = (navigator.getUserMedia ||
                        navigator.webkitGetUserMedia ||
                        navigator.mozGetUserMedia ||
                        navigator.msGetUserMedia);
 
-                getScreenId(function (error, sourceId, screen_constraints) {
+                document.getElementById('capture-screen').onclick = function() {
+                    getScreenId(function (error, sourceId, screen_constraints) {
 
-                    // successCallback
-                    var onSuccess = function (localMediaStream) {
-                        var video = document.querySelector('video');
-                        video.src = window.URL.createObjectURL(localMediaStream);
-                    };
+                        // successCallback
+                        var onSuccess = function (localMediaStream) {
+                            var video = document.querySelector('video');
+                            video.src = window.URL.createObjectURL(localMediaStream);
+                        };
 
-                    // errorCallback
-                    var onFailure = function (err) {
-                        console.log("The following error occured: " + JSON.stringify(err, null, '---'));
-                    };
+                        // errorCallback
+                        var onFailure = function (err) {
+                            console.log("The following error occured: " + JSON.stringify(err, null, '---'));
+                        };
 
-                    console.log(navigator.getUserMedia);
+                        console.log(navigator.getUserMedia);
 
-                    navigator.getUserMedia(screen_constraints, onSuccess, onFailure);
-                });
+                        navigator.getUserMedia(screen_constraints, onSuccess, onFailure);
+                    });
+                };
             </script>
         </article>
     </body>
