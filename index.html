@@ -18,20 +18,21 @@
     <body>
         <video  id="video" autoplay></video>
         <script>
+            var getUserMedia = (navigator.getUserMedia ||
+                   navigator.webkitGetUserMedia ||
+                   navigator.mozGetUserMedia ||
+                   navigator.msGetUserMedia);
+
             getScreenId(function (error, sourceId, screen_constraints) {
-                var getUserMedia = (navigator.getUserMedia ||
-                       navigator.webkitGetUserMedia ||
-                       navigator.mozGetUserMedia ||
-                       navigator.msGetUserMedia);
 
                 // successCallback
-                function onSuccess(localMediaStream) {
+                var onSuccess = function (localMediaStream) {
                     var video = document.querySelector('video');
                     video.src = window.URL.createObjectURL(localMediaStream);
                 }
 
                 // errorCallback
-                function onFailure(err) {
+                var onFailure = function (err) {
                     console.log("The following error occured: " + err);
                 }
 
