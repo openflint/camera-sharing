@@ -18,7 +18,7 @@
     <body>
         <video  id="video" autoplay></video>
         <script>
-            var getUserMedia = (navigator.getUserMedia ||
+            navigator.getUserMedia = (navigator.getUserMedia ||
                    navigator.webkitGetUserMedia ||
                    navigator.mozGetUserMedia ||
                    navigator.msGetUserMedia);
@@ -29,14 +29,16 @@
                 var onSuccess = function (localMediaStream) {
                     var video = document.querySelector('video');
                     video.src = window.URL.createObjectURL(localMediaStream);
-                }
+                };
 
                 // errorCallback
                 var onFailure = function (err) {
-                    console.log("The following error occured: " + err);
-                }
+                    console.log("The following error occured: " + JSON.stringify(err, null, '---'));
+                };
 
-                getUserMedia(screen_constraints, onSuccess, onFailure);
+                console.log(navigator.getUserMedia);
+
+                navigator.getUserMedia(screen_constraints, onSuccess, onFailure);
             });
         </script>
     </body>
