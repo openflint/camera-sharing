@@ -18,6 +18,8 @@
             document.createElement('article');
         </script>
         
+        <script src="scripts/sockit.js"></script>
+        <script src="scripts/ssdp.js"></script>
         <script src="//cdn.webrtc-experiment.com/getScreenId.js"></script>
     </head>
     <body>
@@ -25,6 +27,15 @@
             <video  id="video" autoplay></video>
             <button id="capture-screen">Capture Screen</button>
             <script>
+
+                navigator.getNetworkServices('upnp:urn:dial-multiscreen-org:service:dial:1').then(function(services) {
+
+                    services.addEventListener("servicefound", function(event) {
+                        console.log("servicefound: ", event);
+                    });
+
+                });
+
                 document.getElementById('capture-screen').onclick = function() {
                     getScreenId(function (error, sourceId, screen_constraints) {
                         navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
