@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="flingApp">
     <head>
         <title>OpenFlint Screen Sharing</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -18,23 +18,25 @@
             document.createElement('article');
         </script>
         
-        <script src="scripts/sockit.js"></script>
-        <script src="scripts/ssdp.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
         <script src="//cdn.webrtc-experiment.com/getScreenId.js"></script>
+
+        <script src="js/sockit.js"></script>
+        <script src="js/ssdp.js"></script>
+        <script src="js/controller.js"></script>
     </head>
-    <body>
+
+    <body ng-controller="DeviceListCtrl">
+
+        <ul>
+            <li ng-repeat="service in services">
+                <button id="capture-screen">{{ service.name }}</button>
+            </li>
+        </ul>
+
         <article>
             <video  id="video" autoplay></video>
-            <button id="capture-screen">Capture Screen</button>
             <script>
-
-                navigator.getNetworkServices('upnp:urn:dial-multiscreen-org:service:dial:1').then(function(services) {
-
-                    services.addEventListener("servicefound", function(event) {
-                        console.log("servicefound: ", event);
-                    });
-
-                });
 
                 document.getElementById('capture-screen').onclick = function() {
                     getScreenId(function (error, sourceId, screen_constraints) {
@@ -47,6 +49,7 @@
                     });
                 };
             </script>
+
         </article>
     </body>
 </html>

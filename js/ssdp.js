@@ -67,7 +67,7 @@
 	// http://upnp.org/specs/arch/UPnP-arch-DeviceArchitecture-v1.1.pdf
 	const SSDP_PORT = 1900;
 	const SSDP_ADDRESS = "239.255.255.250";
-	const SSDP_DISCOVER_MX = 2;
+	const SSDP_DISCOVER_MX = 30; // 2;
 	const SSDP_DISCOVER_PACKET =
 		"M-SEARCH * HTTP/1.1\r\n" +
 		"HOST: " + SSDP_ADDRESS + ":" + SSDP_PORT + "\r\n" +
@@ -173,6 +173,7 @@
 			// available.
 			// var msg = String.fromCharCode.apply(null, new Uint8Array(e.data));
 			var msg = e.data;
+			console.log(msg);
 			var lines = msg.toString().split("\r\n");
 			var firstLine = lines.shift();
 			var method = SSDP_RESPONSE_HEADER.test(firstLine) ? 'RESPONSE' : firstLine.split(' ')[0].toUpperCase();
