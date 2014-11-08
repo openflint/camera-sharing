@@ -195,7 +195,7 @@
 			var xhr = new XMLHttpRequest({
 				mozSystem: true
 			});
-			xhr.open("GET", aService.location, true);
+			xhr.open("POST", aService.location, true);
 			xhr.overrideMimeType("text/xml");
 			xhr.addEventListener("load", (function() {
 				if (xhr.status == 200) {
