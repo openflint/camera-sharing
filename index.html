@@ -38,7 +38,7 @@
             <button id="capture-screen">Capture screen</button>
             <script>
 
-                // document.getElementById('capture-screen').onclick = function() {
+                document.getElementById('capture-screen').onclick = function() {
                     getScreenId(function (error, sourceId, screen_constraints) {
                         navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
                         navigator.getUserMedia(screen_constraints, function (stream) {
@@ -47,7 +47,7 @@
                             console.error(error);
                         });
                     });
-                // };
+                };
             </script>
 
         </article>

@@ -2,38 +2,55 @@ var flingApp = angular.module('flingApp', []);
 
 flingApp.controller('DeviceListCtrl', function($scope) {
 
-	function parseServiceInfo(services) {
-		for (var i = 0; i < services.length; i++) {
-			var parser = new DOMParser();
-			var doc = parser.parseFromString(services[i].config, "application/xml");
+	// function parseServiceInfo(services) {
+	// 	for (var i = 0; i < services.length; i++) {
+	// 		var parser = new DOMParser();
+	// 		var doc = parser.parseFromString(services[i].config, "application/xml");
 
-			var friendlyName = doc.querySelector('friendlyName').innerHTML;
+	// 		var friendlyName = doc.querySelector('friendlyName').innerHTML;
 
-			var address = services[i].url
-				.replace(':9431/ssdp/notfound', '')
-				.replace('http://', '')
+	// 		var address = services[i].url
+	// 			.replace(':9431/ssdp/notfound', '')
+	// 			.replace('http://', '')
 
-			console.log("friendlyName: ", friendlyName);
-			console.log("address: ", address);
-			console.log("config: ", config);
+	// 		console.log("friendlyName: ", friendlyName);
+	// 		console.log("address: ", address);
+	// 		console.log("config: ", config);
 
-			services[i].address = address;
-			services[i].friendlyName = friendlyName;
-		}
-	}
+	// 		services[i].address = address;
+	// 		services[i].friendlyName = friendlyName;
+	// 	}
+	// }
 
-	navigator.getNetworkServices('upnp:urn:dial-multiscreen-org:service:dial:1').then(function(services) {
-		$scope.services = services;
-		services.addEventListener("servicefound", function(event) {
-			console.log("servicefound: ", event);
-			parseServiceInfo(services);
-			$scope.$apply();
-		});
-		services.addEventListener("servicelost", function(event) {
-			console.log("servicelost: ", event);
-			$scope.$apply();
-		});
+	$scope.deviceManger = navigator.getFlingDeviceManager();
+
+	$scope.deviceManger.on('devicefound', function(device) {
+		console.log(device);
+		// 		$scope.devices = $scope.scanner.getDeviceList();
+		// 		$scope.$apply();
 	});
+
+	$scope.deviceManger.on('devicelost', function(device) {
+		// 		$scope.devices = $scope.scanner.getDeviceList();
+		// 		$scope.$apply();
+	});
+
+	$scope.deviceManger.emit('devicefound', {
+		name: 'MatchStick'
+	});
+
+	// navigator.getNetworkServices('upnp:urn:dial-multiscreen-org:service:dial:1').then(function(services) {
+	// 	$scope.services = services;
+	// 	services.addEventListener("servicefound", function(event) {
+	// 		console.log("servicefound: ", event);
+	// 		parseServiceInfo(services);
+	// 		$scope.$apply();
+	// 	});
+	// 	services.addEventListener("servicelost", function(event) {
+	// 		console.log("servicelost: ", event);
+	// 		$scope.$apply();
+	// 	});
+	// });
 
 	// $scope.devices = [{
 	// 	'name': 'Nexus S',
