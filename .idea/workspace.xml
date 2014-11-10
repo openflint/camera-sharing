@@ -66,8 +66,8 @@
       <file leaf-file-name="screen_viewer.html" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/screen_viewer.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.19672132" vertical-offset="0" max-vertical-offset="784">
-              <caret line="9" column="12" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
+            <state vertical-scroll-proportion="0.41530055" vertical-offset="0" max-vertical-offset="816">
+              <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -76,8 +76,8 @@
       <file leaf-file-name="flint_receiver_manager.coffee" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/flint_receiver_sdk/flint_receiver_manager.coffee">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="971" max-vertical-offset="1968">
-              <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="100" max-vertical-offset="1968">
+              <caret line="22" column="6" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="6" />
               <folding />
             </state>
           </provider>
@@ -86,12 +86,9 @@
       <file leaf-file-name="flint_receiver_sdk.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/flint_receiver_sdk.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="4432" max-vertical-offset="5952">
-              <caret line="309" column="11" selection-start-line="309" selection-start-column="11" selection-end-line="309" selection-end-column="11" />
-              <folding>
-                <marker date="1415608997000" expanded="true" signature="676:817" placeholder="{...}" />
-                <marker date="1415608997000" expanded="true" signature="890:903" placeholder="{...}" />
-              </folding>
+            <state vertical-scroll-proportion="0.0" vertical-offset="5208" max-vertical-offset="5952">
+              <caret line="363" column="27" selection-start-line="363" selection-start-column="7" selection-end-line="363" selection-end-column="27" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -101,26 +98,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0" vertical-offset="6120" max-vertical-offset="8208">
               <caret line="388" column="7" selection-start-line="388" selection-start-column="7" selection-end-line="388" selection-end-column="7" />
-              <folding>
-                <marker date="1415608997000" expanded="true" signature="545:686" placeholder="{...}" />
-                <marker date="1415608997000" expanded="true" signature="759:772" placeholder="{...}" />
-                <marker date="1415608997000" expanded="true" signature="10528:10943" placeholder="{&quot;type&quot;: 'http-post'...}" />
-                <marker date="1415608997000" expanded="true" signature="10618:10696" placeholder="{&quot;Content-Type&quot;: 'application/json'...}" />
-                <marker date="1415608997000" expanded="true" signature="10753:10880" placeholder="{...}" />
-                <marker date="1415608997000" expanded="true" signature="10812:10881" placeholder="{...}" />
-                <marker date="1415608997000" expanded="true" signature="10713:11063" placeholder="{...}" />
-                <marker date="1415608997000" expanded="true" signature="10967:11407" placeholder="{...}" />
-                <marker date="1415608997000" expanded="true" signature="12135:12241" placeholder="{&quot;Content-Type&quot;: 'application/json'...}" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="screen_viewer.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/js/screen_viewer.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="96">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -633,51 +610,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/screen_viewer.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="96">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/flint_receiver_sdk/flint_receiver_manager.coffee">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="971" max-vertical-offset="1968">
-          <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/flint_receiver_sdk.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="4432" max-vertical-offset="5952">
-          <caret line="309" column="11" selection-start-line="309" selection-start-column="11" selection-end-line="309" selection-end-column="11" />
-          <folding>
-            <marker date="1415608997000" expanded="true" signature="676:817" placeholder="{...}" />
-            <marker date="1415608997000" expanded="true" signature="890:903" placeholder="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/flint_sender_sdk.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="6120" max-vertical-offset="8208">
-          <caret line="388" column="7" selection-start-line="388" selection-start-column="7" selection-end-line="388" selection-end-column="7" />
-          <folding>
-            <marker date="1415608997000" expanded="true" signature="545:686" placeholder="{...}" />
-            <marker date="1415608997000" expanded="true" signature="759:772" placeholder="{...}" />
-            <marker date="1415608997000" expanded="true" signature="10528:10943" placeholder="{&quot;type&quot;: 'http-post'...}" />
-            <marker date="1415608997000" expanded="true" signature="10618:10696" placeholder="{&quot;Content-Type&quot;: 'application/json'...}" />
-            <marker date="1415608997000" expanded="true" signature="10753:10880" placeholder="{...}" />
-            <marker date="1415608997000" expanded="true" signature="10812:10881" placeholder="{...}" />
-            <marker date="1415608997000" expanded="true" signature="10713:11063" placeholder="{...}" />
-            <marker date="1415608997000" expanded="true" signature="10967:11407" placeholder="{...}" />
-            <marker date="1415608997000" expanded="true" signature="12135:12241" placeholder="{&quot;Content-Type&quot;: 'application/json'...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/common/event_emitter.coffee">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2688">
@@ -710,10 +642,42 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/flint_receiver_sdk/flint_receiver_manager.coffee">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="100" max-vertical-offset="1968">
+          <caret line="22" column="6" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/flint_receiver_sdk.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="5208" max-vertical-offset="5952">
+          <caret line="363" column="27" selection-start-line="363" selection-start-column="7" selection-end-line="363" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/screen_viewer.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="96">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/js/flint_sender_sdk.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="6120" max-vertical-offset="8208">
+          <caret line="388" column="7" selection-start-line="388" selection-start-column="7" selection-end-line="388" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/screen_viewer.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.19672132" vertical-offset="0" max-vertical-offset="784">
-          <caret line="9" column="12" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
+        <state vertical-scroll-proportion="0.41530055" vertical-offset="0" max-vertical-offset="816">
+          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
           <folding />
         </state>
       </provider>
