@@ -9,13 +9,16 @@ module.exports = (grunt) ->
                 options:
                     join: true
                 files:
-                    'js/flint_sdk.js': [
-                        'src/flint_sdk/event_emitter.coffee'
-                        'src/flint_sdk/discovery_api.coffee'
-                        'src/flint_sdk/device_manager.coffee'
-                        'src/flint_sdk/polyfill.coffee'
+                    'js/flint_sender_sdk.js': [
+                        'src/common/event_emitter.coffee'
+                        'src/flint_sender_sdk/discovery_api.coffee'
+                        'src/flint_sender_sdk/device_manager.coffee'
+                        'src/flint_sender_sdk/polyfill.coffee'
                     ]
-
+                    'js/flint_receiver_sdk.js': [
+                        'src/common/event_emitter.coffee'
+                        'src/flint_receiver_sdk/flint_receiver_manager.coffee'
+                    ]
         concat:
             dist:
                 src: ['src/intro.js', 'src/project.js', 'src/outro.js'],

@@ -36,12 +36,15 @@ class FlintExtension
             # if browser is asking whether extension is available
             if message?.reply
                 requestId = message.requestId
+                console.log "REPLY: requestId = " + requestId
                 callback = @requestReplies[requestId]
-                delete @requestReplies[requestId]
-                callback(message.payload)
+                if callback
+                    delete @requestReplies[requestId]
+                    callback(message.payload)
 
     invoke: (payload, reply) ->
         requestId = @_genRequestId()
+        console.log "INVOKE: requestId = " + requestId, reply
         @requestReplies[requestId] = reply
         window.postMessage {
             protocol: 'flint-message'
@@ -52,12 +55,100 @@ class FlintExtension
     _genRequestId: ->
         @requestId++
 
+
+class FlingApplication extends EventEmitter
+
+    constructor: (@device, opts) ->
+        @id = opts.appId
+        @url = opts.appUrl
+        @connected = false
+        @useIpc = opts.useIpc or false
+        @maxInactive = opts.maxInactive or -1
+        @additionalDatas = {}
+        @token = null
+        @heartbeatInterval = 0
+        @device.on "disconnect", =>
+
+    launch: (relaunchIfRunning) ->
+
+        launchType = 'launch'
+        launchType = 'relaunch' if relaunchIfRunning
+
+        FlintExtension.getInstance().invoke (
+            type: 'http-post'
+            url: 'http://' + @device.address + ':9431/apps/' + @id
+            headers:
+                'Content-Type': 'application/json'
+            postData:
+                type: launchType
+                app_info:
+                    url: @url
+                    useIpc: @useIpc
+                    maxInactive: @maxInactive
+        ), (reply) =>
+            #  {type: "http-post", content: "{"token":"549a2c00-68a5-11e4-bbf3-4b1fad08645a","interval":3000}"}
+            content = JSON.parse(reply.content)
+            @connected = true
+            @token = content?.token
+            @heartbeatInterval = content?.interval
+            console.log "@token: ", @token
+            console.log "@heartbeatInterval: ", @heartbeatInterval
+            @_heartbeat()
+
+    _heartbeat: ->
+        console.log "_heartbeat"
+        if @connected and @useIpc
+            setTimeout (=>
+                @_getStatus (content) =>
+                    console.log 'status: ', content
+                    @_heartbeat()
+            ), @heartbeatInterval - 100
+
+    _parseStatus: (status) ->
+        lines = status.split('\n');
+        lines.splice(0,1);
+        responseText = lines.join('');
+        parser = new DOMParser();
+        doc = parser.parseFromString(responseText, "text/xml");
+
+        @appName = doc.getElementsByTagName("name")[0].innerHTML;
+        @appState = doc.getElementsByTagName("state")[0].innerHTML;
+
+        link = doc.getElementsByTagName("link");
+        link = link[0] if link
+        @appHref = link.getAttribute("href");
+
+        additionalData = doc.getElementsByTagName("additionalData");
+        if additionalData?.length > 0
+            items = additionalData[0].childNodes;
+            if items
+                for i in [0 .. items.length - 1]
+                    if items[i].tagName
+                        @additionalDatas[items[i].tagName] = items[i].innerHTML
+            @emit "additionaldatachanged", @additionalDatas
+
+    _getStatus: (callback) ->
+        console.log '_getStatus'
+        FlintExtension.getInstance().invoke (
+            type: 'http-get'
+            url: 'http://' + @device.address + ':9431/apps/' + @id
+            headers:
+                'Content-Type': 'application/json'
+                'Accept': 'application/xml; charset=utf8'
+                'Authorization': @token
+        ), (reply) =>
+            console.log '_getStatus reply', reply
+            @_parseStatus(reply.content)
+            callback?(reply.content)
+
 class FlingDevice extends EventEmitter
 
     constructor: (opts) ->
         @friendlyName = opts.friendlyName
         @address = opts.address
-        @service = opts.service
+
+    app: (opts) ->
+        app = new FlingApplication(this, opts)
 
 class FlingDeviceManager extends EventEmitter
 
@@ -91,12 +182,6 @@ class FlingDeviceManager extends EventEmitter
                         address: address
                         service: services[i]
 
-        @extension.invoke (
-            type: 'http-get'
-            url: 'http://192.168.1.146:8008/ssdp/device-desc.xml'
-        ), (payload) =>
-            console.log payload.content
-
         # Search devices
         type = 'upnp:urn:dial-multiscreen-org:service:dial:1'
         navigator.getNetworkServices(type).then (services) =>
@@ -116,5 +201,6 @@ class FlingDeviceManager extends EventEmitter
     _devicesOnline: (device) ->
 
 this.FlintExtension = FlintExtension
+this.FlingApplication = FlingApplication
 this.FlingDevice = FlingDevice
 this.FlingDeviceManager = FlingDeviceManager

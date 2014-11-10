@@ -173,7 +173,7 @@
 			// available.
 			// var msg = String.fromCharCode.apply(null, new Uint8Array(e.data));
 			var msg = e.data;
-			console.log(msg);
+//			console.log(msg);
 			var lines = msg.toString().split("\r\n");
 			var firstLine = lines.shift();
 			var method = SSDP_RESPONSE_HEADER.test(firstLine) ? 'RESPONSE' : firstLine.split(' ')[0].toUpperCase();

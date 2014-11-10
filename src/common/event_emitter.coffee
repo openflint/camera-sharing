@@ -15,9 +15,11 @@
 
 
 indexOfListener = (listeners, listener) ->
-    i = listeners.length
-    return i if listeners[i].listener is listener while i--
-    -1
+    if listeners.length > 0
+        for i in [0 .. listeners.length - 1]
+            if listeners[i].listener is listener
+                return i
+    return -1
 
 alias = (name) ->
     -> this[name].apply this, arguments

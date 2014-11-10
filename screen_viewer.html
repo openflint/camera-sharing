@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        body {
+            background-color: #eee
+        }
+    </style>
+    <script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+    <script src="js/flint_receiver_sdk.js"></script>
+</head>
+<body>
+<video id="video" autoplay></video>
+<script>
+
+    // Create fling receiver manager
+    var rcvmgr = new FlintReceiverManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba');
+
+    // Create peer
+    var peer = new Peer({ host: 'localhost', port: 9433 });
+
+    peer.on('open', function (id) {
+
+        console.log("Peer Id = " + id);
+
+        // Use receiver uuid as peerId
+        rcvmgr.start({ peerId: id });
+
+        peer.on('call', function (call) {
+            // Answer the call, providing our mediaStream
+            call.answer();
+            call.on('stream', function (stream) {
+                // `stream` is the MediaStream of the remote peer.
+                // Here you'd add it to an HTML video/canvas element.
+                var video = document.getElementById('video');
+                video.src = window.URL.createObjectURL(stream);
+            });
+        });
+    });
+</script>
+</body>
+</html>

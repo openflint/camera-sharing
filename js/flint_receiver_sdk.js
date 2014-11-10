@@ -1,20 +1,17 @@
 (function() {
-  var EventEmitter, FlingDevice, FlingDeviceManager, FlintExtension, alias, indexOfListener,
+  var EventEmitter, FlintReceiverManager, WebSocketReadyState, alias, indexOfListener,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   indexOfListener = function(listeners, listener) {
-    var i;
-    i = listeners.length;
-    if ((function() {
-      var _results;
-      _results = [];
-      while (i--) {
-        _results.push(listeners[i].listener === listener);
+    var i, _i, _ref;
+    if (listeners.length > 0) {
+      for (i = _i = 0, _ref = listeners.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+        if (listeners[i].listener === listener) {
+          return i;
+        }
       }
-      return _results;
-    })()) {
-      return i;
     }
     return -1;
   };
@@ -225,148 +222,145 @@
 
   })();
 
-  FlintExtension = (function() {
-    FlintExtension.instance = null;
+  WebSocketReadyState = (function() {
+    function WebSocketReadyState() {}
 
-    FlintExtension.getInstance = function() {
-      if (!FlintExtension.instance) {
-        FlintExtension.instance = new FlintExtension();
-      }
-      return FlintExtension.instance;
-    };
+    WebSocketReadyState.CONNECTING = 0;
 
-    function FlintExtension() {
-      this.requestId = 1;
-      this.requestReplies = {};
-      window.addEventListener('message', (function(_this) {
-        return function(event) {
-          var callback, message, requestId;
-          message = event.data;
-          if ((message != null ? message.protocol : void 0) !== 'flint-message') {
-            return;
-          }
-          if (message != null ? message.reply : void 0) {
-            requestId = message.requestId;
-            callback = _this.requestReplies[requestId];
-            delete _this.requestReplies[requestId];
-            return callback(message.payload);
-          }
-        };
-      })(this));
-    }
+    WebSocketReadyState.OPEN = 1;
 
-    FlintExtension.prototype.invoke = function(payload, reply) {
-      var requestId;
-      requestId = this._genRequestId();
-      this.requestReplies[requestId] = reply;
-      return window.postMessage({
-        protocol: 'flint-message',
-        requestId: requestId,
-        payload: payload
-      }, '*');
-    };
+    WebSocketReadyState.CLOSING = 2;
 
-    FlintExtension.prototype._genRequestId = function() {
-      return this.requestId++;
-    };
+    WebSocketReadyState.CLOSED = 3;
 
-    return FlintExtension;
+    return WebSocketReadyState;
 
   })();
 
-  FlingDevice = (function(_super) {
-    __extends(FlingDevice, _super);
+  FlintReceiverManager = (function(_super) {
+    __extends(FlintReceiverManager, _super);
 
-    function FlingDevice(opts) {
-      this.friendlyName = opts.friendlyName;
-      this.address = opts.address;
-      this.service = opts.service;
+    function FlintReceiverManager(appId) {
+      this.appId = appId;
+      this.wsconn = null;
+      this.wsServer = "ws://localhost:9431/receiver/" + this.appId;
     }
 
-    return FlingDevice;
-
-  })(EventEmitter);
-
-  FlingDeviceManager = (function(_super) {
-    __extends(FlingDeviceManager, _super);
-
-    function FlingDeviceManager() {
-      var parseServiceInfo, type;
-      console.log('FlingDeviceManager constructor');
-      this.devices = {};
-      this.extension = FlintExtension.getInstance();
-      parseServiceInfo = (function(_this) {
-        return function(services) {
-          var address, config, doc, friendlyName, i, parser, _i, _ref, _results;
-          _results = [];
-          for (i = _i = 0, _ref = services.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-            parser = new DOMParser();
-            config = services[i].config;
-            doc = parser.parseFromString(config, "application/xml");
-            friendlyName = doc.querySelector('friendlyName').innerHTML;
-            address = services[i].url.replace(':9431/ssdp/notfound', '').replace(':8008/ssdp/notfound', '').replace('http://', '');
-            console.log("friendlyName: ", friendlyName);
-            console.log("address: ", address);
-            console.log("config: ", config);
-            services[i].address = address;
-            services[i].friendlyName = friendlyName;
-            if (!_this.devices[address]) {
-              _results.push(_this.devices[address] = new FlingDevice({
-                friendlyName: friendlyName,
-                address: address,
-                service: services[i]
-              }));
-            } else {
-              _results.push(void 0);
-            }
-          }
-          return _results;
+    FlintReceiverManager.prototype.start = function(additionalData) {
+      var _ref, _ref1;
+      if (((_ref = this.wsconn) != null ? _ref.readyState : void 0) === WebSocketReadyState.CONNECTING) {
+        return;
+      }
+      if (((_ref1 = this.wsconn) != null ? _ref1.readyState : void 0) === WebSocketReadyState.OPEN) {
+        return;
+      }
+      this.additionalData = additionalData;
+      this.wsconn = new WebSocket(this.wsServer);
+      this.wsconn.onopen = (function(_this) {
+        return function(evt) {
+          return _this._onOpen(evt);
         };
       })(this);
-      this.extension.invoke({
-        type: 'http-get',
-        url: 'http://192.168.1.146:8008/ssdp/device-desc.xml'
-      }, (function(_this) {
-        return function(payload) {
-          return console.log(payload.content);
+      this.wsconn.onclose = (function(_this) {
+        return function(evt) {
+          return console.info("----------------------------------------------->flingd onclose....");
         };
-      })(this));
-      type = 'upnp:urn:dial-multiscreen-org:service:dial:1';
-      navigator.getNetworkServices(type).then((function(_this) {
-        return function(services) {
-          services.addEventListener("servicefound", function(event) {
-            console.log("servicefound: ", event);
-            parseServiceInfo(services);
-            return _this.emit('devicefound');
+      })(this);
+      this.wsconn.onmessage = (function(_this) {
+        return function(evt) {
+          console.info("----------------------------------------------->flingd onmessage....", evt.data);
+          if (evt.data) {
+            return _this._onMessage(JSON.parse(evt.data));
+          }
+        };
+      })(this);
+      return this.wsconn.onerror = (function(_this) {
+        return function(evt) {
+          console.info("----------------------------------------------->flingd onerror....", evt);
+          return _this._onError({
+            message: "Underlying websocket is not open",
+            socketReadyState: evt.target.readyState
           });
-          return services.addEventListener("servicelost", function(event) {
-            return console.log("servicelost: ", event);
-          });
         };
-      })(this));
-      this.extension.invoke({
-        type: 'are-you-there'
-      }, (function(_this) {
-        return function(payload) {
-          return console.log(payload);
-        };
-      })(this));
-    }
-
-    FlingDeviceManager.prototype.getDeviceList = function() {
-      return this.devices;
+      })(this);
     };
 
-    FlingDeviceManager.prototype._devicesOnline = function(device) {};
+    FlintReceiverManager.prototype.send = function(data) {
+      var _ref, _ref1;
+      data["appid"] = this.appId;
+      data = JSON.stringify(data);
+      console.info("----------------------------------------------->flingd send....", data);
+      if (((_ref = this.wsconn) != null ? _ref.readyState : void 0) === WebSocketReadyState.OPEN) {
+        return this.wsconn.send(data);
+      } else if (((_ref1 = this.ws) != null ? _ref1.readyState : void 0) === WebSocketReadyState.CONNECTING) {
+        return setTimeout(((function(_this) {
+          return function() {
+            return _this.send(data);
+          };
+        })(this)), 50);
+      } else {
+        return this._onError({
+          message: "Underlying websocket is not open",
+          socketReadyState: WebSocketReadyState.CLOSED
+        });
+      }
+    };
 
-    return FlingDeviceManager;
+    FlintReceiverManager.prototype._onError = function(event) {
+      return this.emit("error", event);
+    };
+
+    FlintReceiverManager.prototype._onOpen = function() {
+      return this.send({
+        type: "register"
+      });
+    };
+
+    FlintReceiverManager.prototype._onSenderConnected = function(data) {};
+
+    FlintReceiverManager.prototype._onSenderDisconnected = function(data) {};
+
+    FlintReceiverManager.prototype._onMessage = function(data) {
+      console.error("_onMessage", data);
+      switch (data != null ? data.type : void 0) {
+        case 'startheartbeat':
+          return console.log('startheartbeat');
+        case 'registerok':
+          this.localIpAddress = data["service_info"]["ip"][0];
+          this.uuid = data["service_info"]["uuid"];
+          this.deviceName = data["service_info"]["device_name"];
+          console.info("=========================================>flingd has onopened: ", (__indexOf.call(self, "onopend") >= 0));
+          this.send({
+            type: "additionaldata",
+            additionaldata: this.additionalData
+          });
+          return this.emit('ready');
+        case 'heartbeat':
+          if (data.heartbeat === 'ping') {
+            return this.send({
+              type: 'heartbeat',
+              heartbeat: 'pong'
+            });
+          } else {
+            return this.send({
+              type: 'heartbeat',
+              heartbeat: 'ping'
+            });
+          }
+          break;
+        case "senderconnected":
+          return this._onSenderConnected(data);
+        case "senderdisconnected":
+          return this._onSenderDisconnected(data);
+        default:
+          return this.emit('message', data);
+      }
+    };
+
+    return FlintReceiverManager;
 
   })(EventEmitter);
 
-  this.FlintExtension = FlintExtension;
-
-  this.FlingDevice = FlingDevice;
-
-  this.FlingDeviceManager = FlingDeviceManager;
+  this.FlintReceiverManager = FlintReceiverManager;
 
 }).call(this);
