@@ -24,7 +24,7 @@ flingApp.controller('DeviceListCtrl', function ($scope, $window) {
 
         var app = device.app({
             appId: '~a3ad1b9e-6883-11e4-b116-123b93f75cba',
-            appUrl: 'https://openflint.github.io/screen-sharing-sample/screen_viewer.html',
+            appUrl: 'http://openflint.github.io/screen-sharing-sample/screen_viewer.html',
             useIpc: true
         });
 
