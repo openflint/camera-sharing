@@ -351,9 +351,8 @@
       this.appState = doc.getElementsByTagName("state")[0].innerHTML;
       link = doc.getElementsByTagName("link");
       if (link) {
-        link = link[0];
+        this.appHref = link[0].getAttribute("href");
       }
-      this.appHref = link.getAttribute("href");
       additionalData = doc.getElementsByTagName("additionalData");
       if ((additionalData != null ? additionalData.length : void 0) > 0) {
         items = additionalData[0].childNodes;

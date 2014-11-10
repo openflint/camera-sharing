@@ -115,8 +115,8 @@ class FlingApplication extends EventEmitter
         @appState = doc.getElementsByTagName("state")[0].innerHTML;
 
         link = doc.getElementsByTagName("link");
-        link = link[0] if link
-        @appHref = link.getAttribute("href");
+        if link
+            @appHref = link[0].getAttribute("href");
 
         additionalData = doc.getElementsByTagName("additionalData");
         if additionalData?.length > 0
