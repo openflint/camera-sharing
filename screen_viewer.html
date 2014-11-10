@@ -19,7 +19,7 @@
     var rcvmgr = new FlintReceiverManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba');
 
     // Create peer
-    var peer = new Peer({ host: 'localhost', port: 9433 });
+    var peer = new Peer({ host: 'localhost', port: 9433, secure: true });
 
     peer.on('open', function (id) {
 
