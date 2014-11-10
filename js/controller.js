@@ -1,65 +1,30 @@
 var flingApp = angular.module('flingApp', []);
 
-flingApp.controller('DeviceListCtrl', function($scope) {
+flingApp.controller('DeviceListCtrl', function ($scope, $window) {
 
-	// function parseServiceInfo(services) {
-	// 	for (var i = 0; i < services.length; i++) {
-	// 		var parser = new DOMParser();
-	// 		var doc = parser.parseFromString(services[i].config, "application/xml");
+    $scope.deviceManger = new $window.FlingDeviceManager();
 
-	// 		var friendlyName = doc.querySelector('friendlyName').innerHTML;
+    $scope.deviceManger.on('devicefound', function (device) {
+        $scope.devices = $scope.deviceManger.getDeviceList();
+        console.log('devicefound !!! ' + $scope.devices.length);
+        $scope.$apply();
+    });
 
-	// 		var address = services[i].url
-	// 			.replace(':9431/ssdp/notfound', '')
-	// 			.replace('http://', '')
+    $scope.deviceManger.on('devicelost', function (device) {
+        $scope.devices = $scope.deviceManger.getDeviceList();
+        $scope.$apply();
+    });
 
-	// 		console.log("friendlyName: ", friendlyName);
-	// 		console.log("address: ", address);
-	// 		console.log("config: ", config);
+    $scope.shareScreen = function (device) {
+        console.log('shareScreen', device.address, " : ", device.friendlyName);
 
-	// 		services[i].address = address;
-	// 		services[i].friendlyName = friendlyName;
-	// 	}
-	// }
-
-	$scope.deviceManger = navigator.getFlingDeviceManager();
-
-	$scope.deviceManger.on('devicefound', function(device) {
-		console.log(device);
-		// 		$scope.devices = $scope.scanner.getDeviceList();
-		// 		$scope.$apply();
-	});
-
-	$scope.deviceManger.on('devicelost', function(device) {
-		// 		$scope.devices = $scope.scanner.getDeviceList();
-		// 		$scope.$apply();
-	});
-
-	$scope.deviceManger.emit('devicefound', {
-		name: 'MatchStick'
-	});
-
-	// navigator.getNetworkServices('upnp:urn:dial-multiscreen-org:service:dial:1').then(function(services) {
-	// 	$scope.services = services;
-	// 	services.addEventListener("servicefound", function(event) {
-	// 		console.log("servicefound: ", event);
-	// 		parseServiceInfo(services);
-	// 		$scope.$apply();
-	// 	});
-	// 	services.addEventListener("servicelost", function(event) {
-	// 		console.log("servicelost: ", event);
-	// 		$scope.$apply();
-	// 	});
-	// });
-
-	// $scope.devices = [{
-	// 	'name': 'Nexus S',
-	// 	'snippet': 'Fast just got faster with Nexus S.'
-	// }, {
-	// 	'name': 'Motorola XOOM™ with Wi-Fi',
-	// 	'snippet': 'The Next, Next Generation tablet.'
-	// }, {
-	// 	'name': 'MOTOROLA XOOM™',
-	// 	'snippet': 'The Next, Next Generation tablet.'
-	// }];
+        getScreenId(function (error, sourceId, screen_constraints) {
+            navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+            navigator.getUserMedia(screen_constraints, function (stream) {
+                document.querySelector('video').src = URL.createObjectURL(stream);
+            }, function (error) {
+                console.error(error);
+            });
+        });
+    }
 });

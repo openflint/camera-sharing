@@ -191,23 +191,36 @@
 			}
 		},
 		_found: function _found(aService) {
+
 			// Use the REST api to request more information about this service
-			var xhr = new XMLHttpRequest({
-				mozSystem: true
-			});
-			xhr.open("POST", aService.location, true);
-			xhr.overrideMimeType("text/xml");
-			xhr.addEventListener("load", (function() {
-				if (xhr.status == 200) {
-					// walk through root device and all the embedded devices
-					var devices = xhr.responseXML.querySelectorAll('device');
-					for (var i = 0; i < devices.length; i++) {
-						this._parseDescriptor(devices[i], aService.location);
-					}
-				}
-			}).bind(this), false);
-			xhr.send(null);
-		},
+//			var xhr = new XMLHttpRequest({
+//				mozSystem: true
+//			});
+//			xhr.open("POST", aService.location, true);
+//			xhr.overrideMimeType("text/xml");
+//			xhr.addEventListener("load", (function() {
+//				if (xhr.status == 200) {
+//					// walk through root device and all the embedded devices
+//					var devices = xhr.responseXML.querySelectorAll('device');
+//					for (var i = 0; i < devices.length; i++) {
+//						this._parseDescriptor(devices[i], aService.location);
+//					}
+//				}
+//			}).bind(this), false);
+//			xhr.send(null);
+
+            FlintExtension.getInstance().invoke({
+                type: 'http-get',
+                url: aService.location
+            }, (function (payload) {
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(payload.content, "application/xml");
+                var devices = doc.querySelectorAll('device');
+                for (var i = 0; i < devices.length; i++) {
+                    this._parseDescriptor(devices[i], aService.location);
+                }
+            }).bind(this));
+        },
 		_parseDescriptor: function _parseDescriptor(device, refUrl) {
 			var udn = device.querySelector("UDN").innerHTML;
 			var serviceList = device.querySelector('serviceList').querySelectorAll('service');
