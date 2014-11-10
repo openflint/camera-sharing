@@ -71,8 +71,21 @@ class FlingApplication extends EventEmitter
 
     launch: (relaunchIfRunning) ->
 
+        # get status first !
+        @_getStatus (content) =>
+            console.log 'status: ', content
+            console.log '@appState: ', @appState
+            console.log '@appName: ', @appName
+
+            if @appState == 'running' and @appName == @id
+                @_launch(true) if relaunchIfRunning
+            else
+                @_launch(false)
+
+    _launch: (relaunch) ->
+
         launchType = 'launch'
-        launchType = 'relaunch' if relaunchIfRunning
+        launchType = 'relaunch' if relaunch
 
         FlintExtension.getInstance().invoke (
             type: 'http-post'
@@ -115,7 +128,7 @@ class FlingApplication extends EventEmitter
         @appState = doc.getElementsByTagName("state")[0].innerHTML;
 
         link = doc.getElementsByTagName("link");
-        if link
+        if link and link[0]
             @appHref = link[0].getAttribute("href");
 
         additionalData = doc.getElementsByTagName("additionalData");
@@ -129,13 +142,17 @@ class FlingApplication extends EventEmitter
 
     _getStatus: (callback) ->
         console.log '_getStatus'
+
+        headers =
+            'Content-Type': 'application/json'
+            'Accept': 'application/xml; charset=utf8'
+
+        headers['Authorization'] = @token if @token
+
         FlintExtension.getInstance().invoke (
             type: 'http-get'
             url: 'http://' + @device.address + ':9431/apps/' + @id
-            headers:
-                'Content-Type': 'application/json'
-                'Accept': 'application/xml; charset=utf8'
-                'Authorization': @token
+            headers: headers
         ), (reply) =>
             console.log '_getStatus reply', reply
             @_parseStatus(reply.content)

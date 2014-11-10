@@ -293,9 +293,26 @@
     }
 
     FlingApplication.prototype.launch = function(relaunchIfRunning) {
+      return this._getStatus((function(_this) {
+        return function(content) {
+          console.log('status: ', content);
+          console.log('@appState: ', _this.appState);
+          console.log('@appName: ', _this.appName);
+          if (_this.appState === 'running' && _this.appName === _this.id) {
+            if (relaunchIfRunning) {
+              return _this._launch(true);
+            }
+          } else {
+            return _this._launch(false);
+          }
+        };
+      })(this));
+    };
+
+    FlingApplication.prototype._launch = function(relaunch) {
       var launchType;
       launchType = 'launch';
-      if (relaunchIfRunning) {
+      if (relaunch) {
         launchType = 'relaunch';
       }
       return FlintExtension.getInstance().invoke({
@@ -350,7 +367,7 @@
       this.appName = doc.getElementsByTagName("name")[0].innerHTML;
       this.appState = doc.getElementsByTagName("state")[0].innerHTML;
       link = doc.getElementsByTagName("link");
-      if (link) {
+      if (link && link[0]) {
         this.appHref = link[0].getAttribute("href");
       }
       additionalData = doc.getElementsByTagName("additionalData");
@@ -368,15 +385,19 @@
     };
 
     FlingApplication.prototype._getStatus = function(callback) {
+      var headers;
       console.log('_getStatus');
+      headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/xml; charset=utf8'
+      };
+      if (this.token) {
+        headers['Authorization'] = this.token;
+      }
       return FlintExtension.getInstance().invoke({
         type: 'http-get',
         url: 'http://' + this.device.address + ':9431/apps/' + this.id,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/xml; charset=utf8',
-          'Authorization': this.token
-        }
+        headers: headers
       }, (function(_this) {
         return function(reply) {
           console.log('_getStatus reply', reply);
