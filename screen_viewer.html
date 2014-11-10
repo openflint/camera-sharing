@@ -32,7 +32,11 @@
 
         peer.on('call', function (call) {
             // Answer the call, providing our mediaStream
+
+            console.log("Answer the call, providing our mediaStream");
+
             call.answer();
+
             call.on('stream', function (stream) {
                 // `stream` is the MediaStream of the remote peer.
                 // Here you'd add it to an HTML video/canvas element.
