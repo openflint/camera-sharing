@@ -51,6 +51,12 @@ class FlintReceiverManager extends EventEmitter
                 message: "Underlying websocket is not open"
                 socketReadyState: evt.target.readyState
 
+    setAdditionalData: (additionalData) ->
+        @additionalData = additionalData
+        @send
+            type:"additionaldata"
+            additionaldata: @additionalData
+
     # Send message to Fling Daemon
     # @param {JSON objects}
     send: (data) ->

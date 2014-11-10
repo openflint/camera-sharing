@@ -285,6 +285,14 @@
       })(this);
     };
 
+    FlintReceiverManager.prototype.setAdditionalData = function(additionalData) {
+      this.additionalData = additionalData;
+      return this.send({
+        type: "additionaldata",
+        additionaldata: this.additionalData
+      });
+    };
+
     FlintReceiverManager.prototype.send = function(data) {
       var _ref, _ref1;
       data["appid"] = this.appId;

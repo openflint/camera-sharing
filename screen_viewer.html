@@ -20,6 +20,8 @@
     // Create fling receiver manager
     var rcvmgr = new FlintReceiverManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba');
 
+    rcvmgr.start();
+
     // Create peer
     var peer = new Peer();
 
@@ -28,7 +30,7 @@
         console.log("Peer Id = " + id);
 
         // Use receiver uuid as peerId
-        rcvmgr.start({ peerId: id });
+        rcvmgr.setAdditionalData({ peerId: id });
 
         peer.on('call', function (call) {
             // Answer the call, providing our mediaStream
