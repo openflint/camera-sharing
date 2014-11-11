@@ -4,38 +4,46 @@ module.exports = (grunt) ->
     grunt.initConfig
         pkg: grunt.file.readJSON 'package.json'
 
-        coffee:
-            compileJoined:
-                options:
-                    join: true
-                files:
-                    'js/flint_sender_sdk.js': [
-                        'src/common/event_emitter.coffee'
-                        'src/flint_sender_sdk/discovery_api.coffee'
-                        'src/flint_sender_sdk/device_manager.coffee'
-                        'src/flint_sender_sdk/polyfill.coffee'
-                    ]
-                    'js/flint_receiver_sdk.js': [
-                        'src/common/event_emitter.coffee'
-                        'src/flint_receiver_sdk/flint_receiver_manager.coffee'
-                    ]
-        concat:
+        browserify:
             dist:
-                src: ['src/intro.js', 'src/project.js', 'src/outro.js'],
-                dest: 'dist/built.js'
+                files:
+                    'dist/flint.js': ['lib/exports.coffee']
+                options:
+                    transform: ['coffeeify']
+                    browserifyOptions:
+                        extensions: ['.coffee']
 
         uglify:
-            options:
-                banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-            build:
-                src: 'src/<%= pkg.name %>.js'
-                dest: 'build/<%= pkg.name %>.min.js'
+            prod:
+                options: { mangle: true, compress: true }
+                src: 'dist/flint.js'
+                dest: 'dist/flint.min.js'
+
+        concat:
+            dev:
+                options:
+                    banner: '/*! <%= pkg.name %> build:<%= pkg.version %>, development. '+
+                        'Copyright(C) 2013-2014 www.OpenFlint.org */'
+                src: 'dist/flint.js'
+                dest: 'dist/flint.js'
+            prod:
+                options:
+                    banner: '/*! <%= pkg.name %> build:<%= pkg.version %>, production. '+
+                        'Copyright(C) 2013-2014 www.OpenFlint.org */'
+                src: 'dist/flint.min.js'
+                dest: 'dist/flint.min.js'
 
     # Load the plugin that provides the "coffee" task.
-    grunt.loadNpmTasks 'grunt-contrib-coffee'
 
     # Load the plugin that provides the "uglify" task.
-    grunt.loadNpmTasks 'grunt-contrib-uglify'
+    # grunt.loadNpmTasks 'grunt-contrib-uglify'
 
     # Default task(s).
-    grunt.registerTask 'default', ['coffee', 'uglify']
+    # grunt.registerTask 'default', ['coffee', 'uglify']
+
+    grunt.loadNpmTasks 'grunt-contrib-coffee'
+    grunt.loadNpmTasks 'grunt-browserify'
+    grunt.loadNpmTasks 'grunt-contrib-uglify'
+    grunt.loadNpmTasks 'grunt-contrib-concat'
+
+    grunt.registerTask 'default', ['browserify', 'uglify', 'concat']

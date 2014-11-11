@@ -28,6 +28,10 @@ flingApp.controller('DeviceListCtrl', function ($scope, $window) {
             useIpc: true
         });
 
+        app.on('launched', function() {
+            var peer = app.createPeer();
+        });
+
         app.on('additionaldatachanged', function(additionalData) {
 
             console.log('additionaldatachanged !!!');

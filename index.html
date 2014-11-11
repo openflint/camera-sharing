@@ -24,31 +24,34 @@
         }
     </style>
 
-    <script>
-        document.createElement('article');
-    </script>
+    <script src="dist/flint.js"></script>
 
-    <script src="js/peer.js"></script>
-    <script src="js/angular.js"></script>
+    <!--<script src="js/angular.js"></script>-->
 
-    <script src="js/flint_sender_sdk.js"></script>
+    <!--<script src="js/flint_sender_sdk.js"></script>-->
 
-    <script src="js/getScreenId.js"></script>
-    <script src="js/sockit.js"></script>
-    <script src="js/ssdp.js"></script>
-    <script src="js/controller.js"></script>
+    <!--<script src="js/getScreenId.js"></script>-->
+    <!--<script src="js/sockit.js"></script>-->
+    <!--<script src="js/ssdp.js"></script>-->
+    <!--<script src="js/controller.js"></script>-->
 </head>
 
-<body ng-controller="DeviceListCtrl">
-
-<ul>
-    <li type="1" ng-repeat="device in devices">
-        <button ng-click="shareScreen(device)">{{ device.friendlyName }}</button>
-    </li>
-</ul>
-
-<article>
-    <video id="video" autoplay></video>
-</article>
+<body>
+<script>
+    // var ws = new FlintWebSocket("ws://192.168.8.169:9439/channels/demo");
+    var ws = new PrivilegeWebSocket("ws://192.168.1.173:8080/channels/demo");
+    ws.onopen = function () {
+        console.log('PrivilegeWebSocket onopen !');
+    };
+    ws.onclose = function () {
+        console.log('PrivilegeWebSocket onclose !');
+    };
+    ws.onmessage = function (event) {
+        console.log('PrivilegeWebSocket onmessage : ' + event.data);
+    };
+    setInterval(function() {
+        ws.send((new Date).toISOString());
+    }, 2000);
+</script>
 </body>
 </html>

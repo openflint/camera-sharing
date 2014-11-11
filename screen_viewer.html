@@ -15,36 +15,79 @@
 <video id="video" autoplay></video>
 <script>
 
+    //
+    // FlintReceiverManager
+    // FlintWebsocketChannel
+    // FlintPeer
+
     console.log('window.FlintReceiverManager', window.FlintReceiverManager);
 
-    // Create fling receiver manager
-    var rcvmgr = new FlintReceiverManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba');
+    // 创建 Receiver 管理器
+    var rmanager = new FlintReceiverManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba');
 
-    // Create peer
-    var peer = new Peer({ host: 'openflint.duapp.com', path:'/peerjs', port:80 });
+    // 准备就绪
+    rmanager.on('ready', function () {
 
-    peer.on('open', function (id) {
+        rmanager.setAdditionalData('', '');
 
-        console.log("Peer Id = " + id);
+        // 创建 Websocket 通道
+        var channel = rmanager.createWebsocketChannel({
+            channelName: 'default'
+        });
 
-        // Use receiver uuid as peerId
-        rcvmgr.start({ peerId: id });
+        // 接受 Websocket 消息
+        channel.on('message', function (message) {
+            console.log('senderId : ' + message.senderId);
+        });
 
-        peer.on('call', function (call) {
-            // Answer the call, providing our mediaStream
+        // 通道关闭
+        channel.on('close', function (message) {
+        });
 
-            console.log("Answer the call, providing our mediaStream");
+        // 创建 WebRTC Peer
+        var peer = new FlintPeer();
 
-            call.answer();
+        peer.on('open', function (id) {
 
-            call.on('stream', function (stream) {
-                // `stream` is the MediaStream of the remote peer.
-                // Here you'd add it to an HTML video/canvas element.
-                var video = document.getElementById('video');
-                video.src = window.URL.createObjectURL(stream);
+            console.log("Peer Id = " + id);
+
+            // The WebRTC Data Channel
+            peer.on('connection', function (conn) {
+
+                // Receive messages
+                conn.on('data', function (data) {
+
+                    console.log('Received', data);
+
+                    // Send messages
+                    conn.send('Reply : ' + data);
+                });
             });
+
+            // Use receiver uuid as peerId
+            // receiverManager.start({ peerId: id });
+
+//            peer.on('call', function (call) {
+//                // Answer the call, providing our mediaStream
+//
+//                console.log("Answer the call, providing our mediaStream");
+//
+//                call.answer();
+//
+//                call.on('stream', function (stream) {
+//                    // `stream` is the MediaStream of the remote peer.
+//                    // Here you'd add it to an HTML video/canvas element.
+//                    var video = document.getElementById('video');
+//                    video.src = window.URL.createObjectURL(stream);
+//                });
+//            });
         });
     });
+
+    // Create peer
+    // var peer = new Peer({ host: 'openflint.duapp.com', path:'/peerjs', port:80 });
+
+
 </script>
 </body>
 </html>
