@@ -21,7 +21,7 @@
     var rcvmgr = new FlintReceiverManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba');
 
     // Create peer
-    var peer = new Peer({ host: 'openflint.duapp.com', path:'/peerjs' });
+    var peer = new Peer({ host: 'openflint.duapp.com', path:'/peerjs', port:18080 });
 
     peer.on('open', function (id) {
 
