@@ -37,7 +37,7 @@ flingApp.controller('DeviceListCtrl', function ($scope, $window) {
 
                 console.log("Receiver PeerId = " + additionalData.peerId);
 
-                var peer = new Peer({ host: 'flintpeer.duapp.com' });
+                var peer = new Peer({ host: 'openflint.duapp.com', path:'/peerjs' });
                 peer.on('open', function (id) {
 
                     console.log("Sender PeerId = " + id);
