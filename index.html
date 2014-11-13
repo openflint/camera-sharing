@@ -65,6 +65,11 @@ console.log(window.screen.width);
 console.log(window.screen.height);
 
 getScreenId(function (error, sourceId, screen_constraints) {
+
+    console.log(error);
+    console.log(sourceId);
+    console.log(screen_constraints);
+
     navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
     navigator.getUserMedia(screen_constraints, function (stream) {
 
