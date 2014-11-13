@@ -69,11 +69,11 @@
                 log('Websocket cause error ' + JSON.stringify(error));
             };
 
-            ws.onmessage = function (data) {
+            ws.onmessage = function (message) {
 
                 // var msg = JSON.parse(data);
 
-                log('Websocket message : ' + typeof(data));
+                log('Websocket message : ' + message.type);
 
 //
 //                if (msg.type === 'senderConnected') {
