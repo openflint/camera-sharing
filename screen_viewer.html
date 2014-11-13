@@ -71,29 +71,24 @@
 
             ws.onmessage = function (message) {
 
-                // var msg = JSON.parse(data);
+                if (message.type === 'senderConnected') {
+                    // Handle new sender connected event
+                    log('Sender connected : ' + msg.senderId);
 
-                log('Websocket message : ' + message.type);
+                } else if (message.type === 'senderDisconnected') {
+                    // Handle sender lost event
+                    log('Sender disconnected : ' + message.senderId);
 
-//
-//                if (msg.type === 'senderConnected') {
-//                    // Handle new sender connected event
-//                    log('Sender connected : ' + msg.senderId);
-//
-//                } else if (msg.type === 'senderDisconnected') {
-//                    // Handle sender lost event
-//                    log('Sender disconnected : ' + msg.senderId);
-//
-//                } else if (msg.type === 'message') {
-//                    // Handle other message
-//
-//                    log('Sender message : ' + msg.data);
-//
-//                    ws.send(JSON.stringify({
-//                        senderId: msg.senderId,
-//                        data: 'Reply : ' + msg.data
-//                    }));
-//                }
+                } else if (message.type === 'message') {
+                    // Handle other message
+
+                    log('Sender message : ' + message.data);
+
+                    ws.send(JSON.stringify({
+                        senderId: msg.senderId,
+                        data: 'Reply : ' + msg.data
+                    }));
+                }
             };
         });
 
