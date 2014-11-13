@@ -36,21 +36,26 @@
 <video id="video" autoplay></video>
 <script>
 
-    var manager = new FlintReceiverManager({
-        appId: '~a3ad1b9e-6883-11e4-b116-123b93f75cba'
-    });
-
     function log(message) {
         $('.logList').append('<li>' + message + '</li>')
     }
 
-    manager.on('ready', function () {
-        log('FlintReceiverManager is ready !');
-    });
+    try {
+        var manager = new FlintReceiverManager({
+            appId: '~a3ad1b9e-6883-11e4-b116-123b93f75cba'
+        });
 
-    manager.start();
+        manager.on('ready', function () {
+            log('FlintReceiverManager is ready !');
+        });
 
-    log('FlintReceiverManager is started !');
+        manager.start();
+
+        log('FlintReceiverManager is started !');
+
+    } catch (e) {
+        log(e.toString());
+    }
 
     // var channel = manager.createWebsocketChannel();
 

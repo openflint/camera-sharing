@@ -40,12 +40,14 @@
 </head>
 
 <body>
-<ul class="deviceList">
-</ul>
+<ul class="deviceList"></ul>
+<ul class="logList"></ul>
 
 <script>
 
-    console.log(window);
+    function log(message) {
+        $('.logList').append('<li>' + message + '</li>')
+    }
 
     var deviceScanner = new FlintDeviceScanner();
 
@@ -96,6 +98,8 @@
     }
 
     deviceScanner.on('devicefound', function (device) {
+
+        log('Found ' + device.friendlyName);
 
         var button = $('<button>' + device.friendlyName + '</button>');
         button.on('click', function () {
