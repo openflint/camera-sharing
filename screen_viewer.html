@@ -37,6 +37,11 @@
 <ul class="logList"></ul>
 <video id="video" autoplay></video>
 <script>
+
+    var PeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+    var SessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription;
+    var RTCIceCandidate = window.RTCIceCandidate || window.mozRTCIceCandidate;
+
     var video = document.getElementById('video');
 
     function log(message) {
