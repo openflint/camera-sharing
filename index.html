@@ -173,6 +173,7 @@ function shareScreen(device) {
         var ws = new PrivWebSocket('ws://' + deviceIp + ':9439/channels/' + channelName + '/senders/' + senderId);
 
         function createPeerConnection() {
+
             log("Creating peer connection");
 
             var config = {
@@ -259,7 +260,9 @@ function shareScreen(device) {
         });
 
         ws.on('message', function (data) {
-            log('Websocket on message : ' + data);
+            console.log('------------------------------');
+            console.log(data);
+            // log('Websocket on message : ' + data);
             // console.log("message: ", data);
         });
     })
