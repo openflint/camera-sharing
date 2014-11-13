@@ -1,8 +1,7 @@
 /*! screen-sharing-sample build:0.1.0, development. Copyright(C) 2013-2014 www.OpenFlint.org */(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var EventEmitter, FlintReceiverManager, WebSocketReadyState,
   __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 EventEmitter = require('eventemitter3');
 
@@ -27,10 +26,11 @@ FlintReceiverManager = (function(_super) {
   function FlintReceiverManager(opts) {
     this.appId = opts.appId;
     this.wsconn = null;
+    this.additionalData = {};
     this.wsServer = "ws://127.0.0.1:9431/receiver/" + this.appId;
   }
 
-  FlintReceiverManager.prototype.start = function(additionalData) {
+  FlintReceiverManager.prototype.start = function() {
     var _ref, _ref1;
     if (((_ref = this.wsconn) != null ? _ref.readyState : void 0) === WebSocketReadyState.CONNECTING) {
       return;
@@ -38,7 +38,6 @@ FlintReceiverManager = (function(_super) {
     if (((_ref1 = this.wsconn) != null ? _ref1.readyState : void 0) === WebSocketReadyState.OPEN) {
       return;
     }
-    this.additionalData = additionalData;
     this.wsconn = new WebSocket(this.wsServer);
     this.wsconn.onopen = (function(_this) {
       return function(evt) {
@@ -69,11 +68,11 @@ FlintReceiverManager = (function(_super) {
     })(this);
   };
 
-  FlintReceiverManager.prototype.setAdditionalData = function(additionalData) {
-    this.additionalData = additionalData;
+  FlintReceiverManager.prototype.setAdditionalData = function(key, value) {
+    this.additionalData[key] = value;
     return this.send({
       type: "additionaldata",
-      additionaldata: this.additionalData
+      additionaldata: JSON.stringify(this.additionalData)
     });
   };
 
@@ -113,7 +112,7 @@ FlintReceiverManager = (function(_super) {
   FlintReceiverManager.prototype._onSenderDisconnected = function(data) {};
 
   FlintReceiverManager.prototype._onMessage = function(data) {
-    console.error("_onMessage", data);
+    console.log("_onMessage", data);
     switch (data != null ? data.type : void 0) {
       case 'startheartbeat':
         return console.log('startheartbeat');
@@ -121,11 +120,6 @@ FlintReceiverManager = (function(_super) {
         this.localIpAddress = data["service_info"]["ip"][0];
         this.uuid = data["service_info"]["uuid"];
         this.deviceName = data["service_info"]["device_name"];
-        console.info("=========================================>flingd has onopened: ", (__indexOf.call(self, "onopend") >= 0));
-        this.send({
-          type: "additionaldata",
-          additionaldata: this.additionalData
-        });
         return this.emit('ready');
       case 'heartbeat':
         if (data.heartbeat === 'ping') {
