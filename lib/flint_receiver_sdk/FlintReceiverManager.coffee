@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+EventEmitter = require 'eventemitter3'
+
 class WebSocketReadyState
     @CONNECTING = 0 # The connection is not yet open.
     @OPEN = 1 # The connection is open and ready to communicate.
