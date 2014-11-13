@@ -5,9 +5,9 @@
     <title></title>
     <style>
         video {
-            position: fixed;
-            left: 0;
-            top: 0;
+            position: absolute;
+            top: 0px;
+            left: 0px;
             width: 100%;
             height: 100%;
             z-index: -100;
@@ -18,6 +18,12 @@
             background-color: #888;
             padding: 0;
             margin: 0;
+        }
+
+        .logList {
+            position: absolute;
+            top: 0px;
+            left: 0px;
         }
 
         li {
@@ -34,8 +40,8 @@
     <script src="js/flint_receiver_sdk.js"></script>
 </head>
 <body>
-<ul class="logList"></ul>
 <video id="video" autoplay></video>
+<ul class="logList"></ul>
 <script>
 
 var PeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
