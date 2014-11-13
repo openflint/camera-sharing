@@ -36,7 +36,7 @@
     <script src="js/sockit.js"></script>
     <script src="js/flint_sender_sdk.js"></script>
     <script src="js/jquery.min.js"></script>
-    <!--<script src="js/getScreenId.js"></script>-->
+    <script src="js/getScreenId.js"></script>
 </head>
 
 <body>
@@ -111,10 +111,31 @@ function shareScreen(device) {
     console.log(window.screen.width);
     console.log(window.screen.height);
 
+    getScreenId(function (error, sourceId, screen_constraints) {
+        navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+        navigator.getUserMedia(screen_constraints, function (stream) {
+
+            log("Received screen stream.");
+
+            localStream = stream;
+
+            // var video = document.getElementById('video');
+            // video.src = window.URL.createObjectURL(localStream);
+
+            stream.onended = function () {
+                log("screen stream ended.");
+            };
+
+            // document.querySelector('video').src = URL.createObjectURL(stream);
+        }, function (error) {
+            console.error(error);
+        });
+    });
+
     // WebRTC
-    navigator.webkitGetUserMedia({
-                audio: false,
-                video: true
+//    navigator.webkitGetUserMedia({
+//                audio: false,
+//                video: true
 //            video: {
 //                mandatory: {
 //                    chromeMediaSource: "screen",
@@ -132,26 +153,26 @@ function shareScreen(device) {
 //                    googImprovedWifiBwe: true
 //                }
 //            }
-            },
-            gotStream, getUserMediaError
-    );
+//            },
+//            gotStream, getUserMediaError
+//    );
 
-    function getUserMediaError() {
-        log("getUserMedia() failed.");
-    }
-
-    function gotStream(stream) {
-        log("Received screen stream.");
-
-        localStream = stream;
-
-        // var video = document.getElementById('video');
-        // video.src = window.URL.createObjectURL(localStream);
-
-        stream.onended = function () {
-            log("screen stream ended.");
-        };
-    }
+//    function getUserMediaError() {
+//        log("getUserMedia() failed.");
+//    }
+//
+//    function gotStream(stream) {
+//        log("Received screen stream.");
+//
+//        localStream = stream;
+//
+//        // var video = document.getElementById('video');
+//        // video.src = window.URL.createObjectURL(localStream);
+//
+//        stream.onended = function () {
+//            log("screen stream ended.");
+//        };
+//    }
 
     deviceManager.once('additionaldatachanged', function (key, value) {
 
