@@ -26,8 +26,18 @@
       <file leaf-file-name="index.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="5.7083335" vertical-offset="1577" max-vertical-offset="2310">
-              <caret line="96" column="30" selection-start-line="96" selection-start-column="30" selection-end-line="96" selection-end-column="30" />
+            <state vertical-scroll-proportion="-63.75" vertical-offset="0" max-vertical-offset="2370">
+              <caret line="102" column="37" selection-start-line="102" selection-start-column="37" selection-end-line="102" selection-end-column="37" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Bridge.coffee" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/flint_sender_sdk/Bridge.coffee">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="510" max-vertical-offset="1650">
+              <caret line="85" column="24" selection-start-line="85" selection-start-column="24" selection-end-line="85" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -36,12 +46,9 @@
       <file leaf-file-name="FlintDeviceManager.coffee" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/flint_sender_sdk/FlintDeviceManager.coffee">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1980">
-              <caret line="16" column="15" selection-start-line="16" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-              <folding>
-                <marker date="1415851956000" expanded="true" signature="766:3989" placeholder="..." />
-                <marker date="1415851956000" expanded="true" signature="3910:3989" placeholder="..." />
-              </folding>
+            <state vertical-scroll-proportion="0.0" vertical-offset="691" max-vertical-offset="2070">
+              <caret line="53" column="31" selection-start-line="53" selection-start-column="31" selection-end-line="53" selection-end-column="31" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -49,8 +56,8 @@
       <file leaf-file-name="PrivWebSocket.coffee" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/flint_sender_sdk/PrivWebSocket.coffee">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1725">
-              <caret line="16" column="22" selection-start-line="16" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="293" max-vertical-offset="1725">
+              <caret line="37" column="26" selection-start-line="37" selection-start-column="26" selection-end-line="37" selection-end-column="26" />
               <folding />
             </state>
           </provider>
@@ -76,34 +83,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="flint_receiver_sdk.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/js/flint_receiver_sdk.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1320" max-vertical-offset="6105">
-              <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="screen_viewer.html" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/screen_viewer.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.675307" vertical-offset="585" max-vertical-offset="2145">
-              <caret line="72" column="41" selection-start-line="72" selection-start-column="41" selection-end-line="72" selection-end-column="41" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Util.coffee" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/flint_sender_sdk/Util.coffee">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="360">
-              <caret line="17" column="15" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="15" />
-              <folding />
+            <state vertical-scroll-proportion="0.32469305" vertical-offset="827" max-vertical-offset="2160">
+              <caret line="71" column="45" selection-start-line="71" selection-start-column="45" selection-end-line="71" selection-end-column="45" />
+              <folding>
+                <marker date="1415856409000" expanded="true" signature="1720:2506" placeholder="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -111,7 +98,7 @@
       <file leaf-file-name="FlintReceiverManager.coffee" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/flint_receiver_sdk/FlintReceiverManager.coffee">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="758" max-vertical-offset="1905">
+            <state vertical-scroll-proportion="0.0" vertical-offset="848" max-vertical-offset="1905">
               <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
               <folding />
             </state>
@@ -121,28 +108,28 @@
       <file leaf-file-name="flint_sender_sdk.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/flint_sender_sdk.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="2745" max-vertical-offset="17865">
+            <state vertical-scroll-proportion="0.0" vertical-offset="2745" max-vertical-offset="18000">
               <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
-                <marker date="1415852445000" expanded="true" signature="8089:8456" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="8131:8171" placeholder="{&quot;Content-Type&quot;: 'application/json'...}" />
-                <marker date="1415852445000" expanded="true" signature="8207:8401" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="8263:8380" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="8535:8673" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="8565:8637" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="8556:8568" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="8817:8928" placeholder="{&quot;Content-Type&quot;: 'application/json'...}" />
-                <marker date="1415852445000" expanded="true" signature="8976:9045" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="9194:9318" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="9203:9311" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="9356:9418" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="9398:9415" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="9409:9413" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="9975:10012" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="10216:10608" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="10225:10571" placeholder="{...}" />
-                <marker date="1415852445000" expanded="true" signature="10480:10488" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="8296:8690" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="8154:8194" placeholder="{&quot;Content-Type&quot;: 'application/json'...}" />
+                <marker date="1415856273000" expanded="true" signature="8230:8424" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="8286:8403" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="8789:8934" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="8826:8898" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="8810:8829" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="9078:9189" placeholder="{&quot;Content-Type&quot;: 'application/json'...}" />
+                <marker date="1415856273000" expanded="true" signature="9237:9306" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="9455:9579" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="9464:9572" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="9617:9679" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="9659:9676" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="9670:9674" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="10236:10273" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="10477:10869" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="10486:10832" placeholder="{...}" />
+                <marker date="1415856273000" expanded="true" signature="10741:10749" placeholder="{...}" />
               </folding>
             </state>
           </provider>
@@ -194,14 +181,14 @@
         <option value="$PROJECT_DIR$/lib/flint_sender_sdk/PrivilegeXMLHttpRequest.coffee" />
         <option value="$PROJECT_DIR$/lib/flint_sender_sdk/exports.coffee" />
         <option value="$PROJECT_DIR$/lib/flint_sender_sdk/FlintDeviceScanner.coffee" />
-        <option value="$PROJECT_DIR$/lib/flint_sender_sdk/Bridge.coffee" />
         <option value="$PROJECT_DIR$/Gruntfile.coffee" />
         <option value="$PROJECT_DIR$/lib/flint_receiver_sdk/exports.coffee" />
         <option value="$PROJECT_DIR$/lib/flint_receiver_sdk/FlintReceiverManager.coffee" />
-        <option value="$PROJECT_DIR$/index.html" />
-        <option value="$PROJECT_DIR$/lib/flint_sender_sdk/FlintDeviceManager.coffee" />
         <option value="$PROJECT_DIR$/lib/flint_sender_sdk/PrivWebSocket.coffee" />
         <option value="$PROJECT_DIR$/lib/flint_sender_sdk/PrivXMLHttpRequest.coffee" />
+        <option value="$PROJECT_DIR$/index.html" />
+        <option value="$PROJECT_DIR$/lib/flint_sender_sdk/Bridge.coffee" />
+        <option value="$PROJECT_DIR$/lib/flint_sender_sdk/FlintDeviceManager.coffee" />
         <option value="$PROJECT_DIR$/screen_viewer.html" />
       </list>
     </option>
@@ -405,6 +392,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="screen-sharing-sample" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="screen-sharing-sample" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="node_modules" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -873,14 +874,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/flint_sender_sdk/Bridge.coffee">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.7352185" vertical-offset="0" max-vertical-offset="1650">
-          <caret line="90" column="0" selection-start-line="90" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/flint_sender_sdk/device_manager.coffee">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1127" max-vertical-offset="3420">
@@ -910,7 +903,7 @@
         <state vertical-scroll-proportion="0.0" vertical-offset="1320" max-vertical-offset="6105">
           <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
           <folding>
-            <element signature="n#!!doc" expanded="true" />
+            <element signature="n#!!doc" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -919,22 +912,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="885">
           <caret line="49" column="5" selection-start-line="49" selection-start-column="5" selection-end-line="49" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/flint_receiver_sdk/FlintReceiverManager.coffee">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="758" max-vertical-offset="1905">
-          <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/flint_sender_sdk/Util.coffee">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="360">
-          <caret line="17" column="15" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="15" />
           <folding />
         </state>
       </provider>
@@ -953,24 +930,24 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="n#!!doc" expanded="true" />
-            <marker date="1415852445000" expanded="true" signature="8089:8456" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="8131:8171" placeholder="{&quot;Content-Type&quot;: 'application/json'...}" />
-            <marker date="1415852445000" expanded="true" signature="8207:8401" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="8263:8380" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="8535:8673" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="8565:8637" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="8556:8568" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="8817:8928" placeholder="{&quot;Content-Type&quot;: 'application/json'...}" />
-            <marker date="1415852445000" expanded="true" signature="8976:9045" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="9194:9318" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="9203:9311" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="9356:9418" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="9398:9415" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="9409:9413" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="9975:10012" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="10216:10608" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="10225:10571" placeholder="{...}" />
-            <marker date="1415852445000" expanded="true" signature="10480:10488" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="8296:8690" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="8154:8194" placeholder="{&quot;Content-Type&quot;: 'application/json'...}" />
+            <marker date="1415856273000" expanded="true" signature="8230:8424" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="8286:8403" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="8789:8934" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="8826:8898" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="8810:8829" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="9078:9189" placeholder="{&quot;Content-Type&quot;: 'application/json'...}" />
+            <marker date="1415856273000" expanded="true" signature="9237:9306" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="9455:9579" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="9464:9572" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="9617:9679" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="9659:9676" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="9670:9674" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="10236:10273" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="10477:10869" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="10486:10832" placeholder="{...}" />
+            <marker date="1415856273000" expanded="true" signature="10741:10749" placeholder="{...}" />
           </folding>
         </state>
       </provider>
@@ -983,33 +960,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="5.7083335" vertical-offset="1577" max-vertical-offset="2310">
-          <caret line="96" column="30" selection-start-line="96" selection-start-column="30" selection-end-line="96" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/flint_sender_sdk/FlintDeviceManager.coffee">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1980">
-          <caret line="16" column="15" selection-start-line="16" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding>
-            <marker date="1415851956000" expanded="true" signature="766:3989" placeholder="..." />
-            <marker date="1415851956000" expanded="true" signature="3910:3989" placeholder="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/flint_sender_sdk/PrivWebSocket.coffee">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1725">
-          <caret line="16" column="22" selection-start-line="16" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/flint_sender_sdk/PrivXMLHttpRequest.coffee">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1695">
@@ -1018,11 +968,61 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/lib/flint_sender_sdk/PrivWebSocket.coffee">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="293" max-vertical-offset="1725">
+          <caret line="37" column="26" selection-start-line="37" selection-start-column="26" selection-end-line="37" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/flint_receiver_sdk/FlintReceiverManager.coffee">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="758" max-vertical-offset="1905">
+          <caret line="99" column="0" selection-start-line="99" selection-start-column="0" selection-end-line="99" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-63.75" vertical-offset="0" max-vertical-offset="2370">
+          <caret line="102" column="37" selection-start-line="102" selection-start-column="37" selection-end-line="102" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/flint_sender_sdk/Util.coffee">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.35667107" vertical-offset="0" max-vertical-offset="757">
+          <caret line="18" column="44" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/flint_sender_sdk/Bridge.coffee">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="510" max-vertical-offset="1650">
+          <caret line="85" column="24" selection-start-line="85" selection-start-column="24" selection-end-line="85" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/flint_sender_sdk/FlintDeviceManager.coffee">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="691" max-vertical-offset="2070">
+          <caret line="53" column="31" selection-start-line="53" selection-start-column="31" selection-end-line="53" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/screen_viewer.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.675307" vertical-offset="585" max-vertical-offset="2145">
-          <caret line="72" column="41" selection-start-line="72" selection-start-column="41" selection-end-line="72" selection-end-column="41" />
-          <folding />
+        <state vertical-scroll-proportion="0.32469305" vertical-offset="827" max-vertical-offset="2160">
+          <caret line="71" column="45" selection-start-line="71" selection-start-column="45" selection-end-line="71" selection-end-column="45" />
+          <folding>
+            <marker date="1415856409000" expanded="true" signature="1720:2506" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>

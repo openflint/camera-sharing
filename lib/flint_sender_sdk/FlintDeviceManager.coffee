@@ -74,8 +74,14 @@ class FlintDeviceManager extends EventEmitter
         @bridge.call2 'http:post', params, (success, content) =>
             if success
                 console.log '_launch reply ', content
+                @_startHeartbeat()
             else
                 console.log '_launch error ', content
+
+    _startHeartbeat: ->
+        # Hearbeat 3s
+        setInterval (=>
+            @_getStatus()), 3000
 
     _getStatus: (callback) ->
         headers =

@@ -100,14 +100,16 @@
             relaunchIfRunning: true
         });
 
+        log('Application is launched !');
+
         deviceManager.once('additionaldatachanged', function (key, value) {
 
-            console.log('additionaldatachanged : ' + key + ' = ' + value);
+            log('additionaldatachanged : ' + key + ' = ' + value);
 
             // Channel name from app info additionalData
             var channelName = deviceManager.getAdditionalData('channelName');
 
-            console.log('channelName : ' + channelName);
+            log('channelName : ' + channelName);
 
             // Device IP from UPnP or MDNS
             var deviceIp = device.host;
@@ -118,11 +120,13 @@
             var ws = new PrivWebSocket('ws://' + deviceIp + ':9439/channels/' + channelName + '/senders/' + senderId);
 
             ws.on('open', function () {
-                ws.send("[ Message from sender-0 ]");
+                log('Websocket is open !');
+                ws.send("[ Message from sender-0 ] ");
             });
 
             ws.on('message', function (data) {
-                console.log("message: ", data);
+                log('Websocket on message : ' + data);
+                // console.log("message: ", data);
             });
         })
     }

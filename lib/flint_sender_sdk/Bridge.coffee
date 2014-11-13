@@ -73,7 +73,7 @@ class Bridge extends EventEmitter
         }, '*'
 
     _genCallId: ->
-        @callid++
+        Math.random().toString(36).substr(2)
 
     #
     # Called from native at the end of asynchronous tasks.

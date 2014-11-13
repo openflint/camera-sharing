@@ -131,7 +131,7 @@ Bridge = (function(_super) {
   };
 
   Bridge.prototype._genCallId = function() {
-    return this.callid++;
+    return Math.random().toString(36).substr(2);
   };
 
   Bridge.prototype._receive = function(result) {
@@ -263,12 +263,21 @@ FlintDeviceManager = (function(_super) {
     return this.bridge.call2('http:post', params, (function(_this) {
       return function(success, content) {
         if (success) {
-          return console.log('_launch reply ', content);
+          console.log('_launch reply ', content);
+          return _this._startHeartbeat();
         } else {
           return console.log('_launch error ', content);
         }
       };
     })(this));
+  };
+
+  FlintDeviceManager.prototype._startHeartbeat = function() {
+    return setInterval(((function(_this) {
+      return function() {
+        return _this._getStatus();
+      };
+    })(this)), 3000);
   };
 
   FlintDeviceManager.prototype._getStatus = function(callback) {

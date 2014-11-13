@@ -52,6 +52,7 @@
         });
 
         manager.on('ready', function () {
+
             log('FlintReceiverManager is ready !');
 
             var channelName = randomToken();
@@ -70,28 +71,28 @@
 
             ws.onmessage = function (event) {
 
-                log('Websocket message : ' + event.data);
+                log('Websocket message : ' + JSON.stringify(event));
 
-                var msg = JSON.parse(event.data);
-
-                if (msg.type === 'senderConnected') {
-                    // Handle new sender connected event
-                    log('Sender connected : ' + msg.senderId);
-
-                } else if (msg.type === 'senderDisconnected') {
-                    // Handle sender lost event
-                    log('Sender disconnected : ' + msg.senderId);
-
-                } else if (msg.type === 'message') {
-                    // Handle other message
-
-                    log('Sender message : ' + msg.data);
-
-                    ws.send(JSON.stringify({
-                        senderId: msg.senderId,
-                        data: 'Reply : ' + msg.data
-                    }));
-                }
+//                var msg = JSON.parse(event.data);
+//
+//                if (msg.type === 'senderConnected') {
+//                    // Handle new sender connected event
+//                    log('Sender connected : ' + msg.senderId);
+//
+//                } else if (msg.type === 'senderDisconnected') {
+//                    // Handle sender lost event
+//                    log('Sender disconnected : ' + msg.senderId);
+//
+//                } else if (msg.type === 'message') {
+//                    // Handle other message
+//
+//                    log('Sender message : ' + msg.data);
+//
+//                    ws.send(JSON.stringify({
+//                        senderId: msg.senderId,
+//                        data: 'Reply : ' + msg.data
+//                    }));
+//                }
             };
         });
 
