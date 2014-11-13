@@ -43,18 +43,26 @@ getScreenId(function (error, sourceId, screen_constraints) {
         function onIFrameCallback(event) {
             if (!event.data) return;
 
+            var needRemove = false;
+
             if (event.data.chromeMediaSourceId) {
                 if (event.data.chromeMediaSourceId === 'PermissionDeniedError') {
                     callback('permission-denied');
-                } else callback(null, event.data.chromeMediaSourceId, getScreenConstraints(null, event.data.chromeMediaSourceId));
+                } else {
+                    callback(null, event.data.chromeMediaSourceId, getScreenConstraints(null, event.data.chromeMediaSourceId));
+                }
+                needRemove = true;
             }
 
             if (event.data.chromeExtensionStatus) {
                 callback(event.data.chromeExtensionStatus, null, getScreenConstraints(event.data.chromeExtensionStatus));
+                needRemove = true;
             }
 
             // this event listener is no more needed
-            window.removeEventListener('message', onIFrameCallback);
+            if (needRemove) {
+                window.removeEventListener('message', onIFrameCallback);
+            }
         }
     };
 
