@@ -87,7 +87,7 @@
                     log('Sender message : ' + message.data);
 
                     ws.send(JSON.stringify({
-                        senderId: msg.senderId,
+                        senderId: message.senderId,
                         data: 'Reply : ' + msg.data
                     }));
                 }
