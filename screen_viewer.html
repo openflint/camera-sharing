@@ -32,7 +32,7 @@
     <script src="//openflint.github.io/screen-sharing-sample/js/flint_receiver_sdk.js"></script>
 </head>
 <body>
-<span class="status"></span>
+<span class="status">NO READY</span>
 <video id="video" autoplay></video>
 <script>
 
@@ -41,8 +41,11 @@
     });
 
     manager.on('ready', function () {
+        console.log('FlintReceiverManager is ready !');
         $('.status').innerText = 'READY';
     });
+
+    manager.start();
 
     // var channel = manager.createWebsocketChannel();
 
