@@ -16,7 +16,7 @@ module.exports = (grunt) ->
 
             receiver:
                 files:
-                    'js/flint_receiver_.js': ['lib/flint_receiver_sdk/exports.coffee']
+                    'js/flint_receiver_sdk.js': ['lib/flint_receiver_sdk/exports.coffee']
                 options:
                     transform: ['coffeeify']
                     browserifyOptions:

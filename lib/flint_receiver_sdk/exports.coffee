@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+window.FlintReceiverManager = require './FlintReceiverManager'
+
 ###
 
 var manager = new FlintReceiverManager({
