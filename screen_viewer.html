@@ -116,12 +116,12 @@ try {
                             log(JSON.stringify(evt));
                             ws.send(JSON.stringify({
                                 senderId: message.senderId,
-                                data: {
+                                data: JSON.stringify({
                                     type: "candidate",
                                     sdpMLineIndex: evt.candidate.sdpMLineIndex,
                                     sdpMid: evt.candidate.sdpMid,
                                     candidate: evt.candidate.candidate
-                                }
+                                })
                             }));
                         } else {
                             log("End of candidates.");
@@ -161,7 +161,7 @@ try {
                     peerConn.setLocalDescription(sessionDescription);
                     ws.send(JSON.stringify({
                         senderId: message.senderId,
-                        data: sessionDescription
+                        data: JSON.stringify(sessionDescription)
                     }));
                 }
 
