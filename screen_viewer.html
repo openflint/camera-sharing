@@ -71,9 +71,9 @@
 
             ws.onmessage = function (data) {
 
-                var msg = JSON.parse(data);
+                // var msg = JSON.parse(data);
 
-                log('Websocket message : ' + msg.type);
+                log('Websocket message : ' + typeof(data));
 
 //
 //                if (msg.type === 'senderConnected') {
