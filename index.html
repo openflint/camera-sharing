@@ -45,193 +45,242 @@
 
 <script>
 
-    function log(message) {
-        $('.logList').prepend('<li>' + message + '</li>')
-    }
+function log(message) {
+    $('.logList').prepend('<li>' + message + '</li>')
+}
 
-    function randomToken() {
-        return Math.random().toString(36).substr(2);
-    }
+function randomToken() {
+    return Math.random().toString(36).substr(2);
+}
 
-    var deviceScanner = new FlintDeviceScanner();
+var deviceScanner = new FlintDeviceScanner();
 
-    function shareScreen(device) {
+function shareScreen(device) {
 
-        // TEST PrivXMLHttpRequest
+    // TEST PrivXMLHttpRequest
 
-        // var xhr = new PrivXMLHttpRequest();
-        // var url = 'http://' + device.host + ':9431/ssdp/device-desc.xml';
-        // xhr.open("GET", url);
-        // xhr.onreadystatechange = function () {
-        //     if (xhr.readyState == 4) {
-        //         if (200 <= xhr.status && xhr.status < 300) {
-        //             console.log(xhr.responseText);
-        //         }
-        //     }
-        // };
-        // xhr.send();
+    // var xhr = new PrivXMLHttpRequest();
+    // var url = 'http://' + device.host + ':9431/ssdp/device-desc.xml';
+    // xhr.open("GET", url);
+    // xhr.onreadystatechange = function () {
+    //     if (xhr.readyState == 4) {
+    //         if (200 <= xhr.status && xhr.status < 300) {
+    //             console.log(xhr.responseText);
+    //         }
+    //     }
+    // };
+    // xhr.send();
 
-        // TST PrivWebSocket
+    // TST PrivWebSocket
 
-        //  var ws = new PrivWebSocket("ws://192.168.8.173:8080/channels/demo");
-        //  ws.onopen = function () {
-        //      console.log('PrivWebSocket onopen !');
-        //  };
-        //  ws.onclose = function () {
-        //      console.log('PrivWebSocket onclose !');
-        //  };
-        //  ws.onmessage = function (event) {
-        //      console.log('PrivWebSocket onmessage : ' + event.data);
-        //  };
-        //
-        //  var timer, count = 0;
-        //  timer = setInterval(function () {
-        //      ws.send((new Date).toISOString());
-        //      if (count++ > 5) {
-        //          clearInterval(timer);
-        //      }
-        //  }, 2000);
+    //  var ws = new PrivWebSocket("ws://192.168.8.173:8080/channels/demo");
+    //  ws.onopen = function () {
+    //      console.log('PrivWebSocket onopen !');
+    //  };
+    //  ws.onclose = function () {
+    //      console.log('PrivWebSocket onclose !');
+    //  };
+    //  ws.onmessage = function (event) {
+    //      console.log('PrivWebSocket onmessage : ' + event.data);
+    //  };
+    //
+    //  var timer, count = 0;
+    //  timer = setInterval(function () {
+    //      ws.send((new Date).toISOString());
+    //      if (count++ > 5) {
+    //          clearInterval(timer);
+    //      }
+    //  }, 2000);
 
-        var deviceManager = new FlintDeviceManager(device);
+    var deviceManager = new FlintDeviceManager(device);
 
-        deviceManager.launch({
-            appId: '~a3ad1b9e-6883-11e4-b116-123b93f75cba',
-            appUrl: 'http://openflint.github.io/screen-sharing-sample/screen_viewer.html',
-            relaunchIfRunning: true
-        });
-
-        log('Application is launched !');
-
-        deviceManager.once('additionaldatachanged', function (key, value) {
-
-            log('additionaldatachanged : ' + key + ' = ' + value);
-
-            // Channel name from app info additionalData
-            var channelName = deviceManager.getAdditionalData('channelName');
-
-            log('channelName : ' + channelName);
-
-            // Device IP from UPnP or MDNS
-            var deviceIp = device.host;
-
-            // The sender identifier，for example the token from DIAL request
-            var senderId = randomToken();
-
-            var peerConn = null;
-
-            // Screen stream
-            var localStream = null;
-
-            var ws = new PrivWebSocket('ws://' + deviceIp + ':9439/channels/' + channelName + '/senders/' + senderId);
-
-            function createPeerConnection() {
-                log("Creating peer connection");
-
-                var config = {
-                    "iceServers": []
-                };
-
-                try {
-                    peerConn = new webkitRTCPeerConnection(config);
-                } catch (e) {
-                    log("Failed to create PeerConnection, exception: " + e.message);
-                }
-
-                // send any ice candidates to the other peer
-                peerConn.onicecandidate = function (evt) {
-                    if (event.candidate) {
-                        log('Sending ICE candidate...');
-                        console.log(evt.candidate);
-
-                        ws.send(JSON.stringify({
-                            type: "candidate",
-                            sdpMLineIndex: evt.candidate.sdpMLineIndex,
-                            sdpMid: evt.candidate.sdpMid,
-                            candidate: evt.candidate.candidate
-                        }));
-
-                    } else {
-                        log("End of candidates.");
-                    }
-                };
-
-                console.log('Adding local stream...', localStream);
-                peerConn.addStream(localStream);
-
-                peerConn.addEventListener("addstream", onRemoteStreamAdded, false);
-                peerConn.addEventListener("removestream", onRemoteStreamRemoved, false);
-
-                // when remote adds a stream, hand it on to the local video element
-                function onRemoteStreamAdded(event) {
-                    console.log("Added remote stream");
-                }
-
-                // when remote removes a stream, remove it from the local video element
-                function onRemoteStreamRemoved(event) {
-                    console.log("Remove remote stream");
-                }
-            }
-
-            var audioBandwidth = 50;
-            var videoBandwidth = 10000;
-
-            function setBandwidth(sdp) {
-                sdp = sdp.replace(/a=mid:audio\r\n/g, 'a=mid:audio\r\nb=AS:' + audioBandwidth + '\r\n');
-                sdp = sdp.replace(/a=mid:video\r\n/g, 'a=mid:video\r\nb=AS:' + videoBandwidth + '\r\n');
-                return sdp;
-            }
-
-            // send SDP via socket connection
-            function setLocalAndSendMessage(sessionDescription) {
-                sessionDescription.sdp = setBandwidth(sessionDescription.sdp);
-                peerConn.setLocalDescription(sessionDescription);
-                log("Sending SDP");
-                console.log(sessionDescription);
-                ws.send(JSON.stringify(sessionDescription));
-            }
-
-            function createOfferFailed() {
-                log("Create Answer failed");
-            }
-
-            ws.on('open', function () {
-                log('Websocket is open ! start screen sharing ...');
-
-                createPeerConnection();
-
-                var mediaConstraints = {
-                    'mandatory': {
-                        'OfferToReceiveAudio': true,
-                        'OfferToReceiveVideo': true
-                    }
-                };
-
-                peerConn.createOffer(setLocalAndSendMessage, createOfferFailed, mediaConstraints);
-            });
-
-            ws.on('message', function (data) {
-                log('Websocket on message : ' + data);
-                // console.log("message: ", data);
-            });
-        })
-    }
-
-    deviceScanner.on('devicefound', function (device) {
-
-        log('Found ' + device.friendlyName);
-
-        var button = $('<button>' + device.friendlyName + '</button>');
-        button.on('click', function () {
-            if (device.sharing) {
-                device.sharing = false;
-                shareScreen(device);
-            } else {
-                device.sharing = true;
-            }
-        });
-
-        $('<li></li>').append(button).appendTo($('.deviceList'));
+    deviceManager.launch({
+        appId: '~a3ad1b9e-6883-11e4-b116-123b93f75cba',
+        appUrl: 'http://openflint.github.io/screen-sharing-sample/screen_viewer.html',
+        relaunchIfRunning: true
     });
+
+    log('Application is launched !');
+
+    // Screen stream
+    var localStream = null;
+
+    var screenWidth = 1280; //window.screen.width;
+    var screenHeight = 720; //window.screen.height;
+
+    console.log(window.screen.width);
+    console.log(window.screen.height);
+
+    // WebRTC
+    navigator.webkitGetUserMedia({
+            audio: false,
+            video: true
+//            video: {
+//                mandatory: {
+//                    chromeMediaSource: "screen",
+//
+//                    minFrameRate: 2,
+//                    minWidth: screenWidth,
+//                    minHeight: screenHeight,
+//
+//                    maxFrameRate: 24,
+//                    maxWidth: screenWidth,
+//                    maxHeight: screenHeight,
+//
+//                    googLeakyBucket: true,
+//                    googNoiseReduction: true,
+//                    googImprovedWifiBwe: true
+//                }
+//            }
+        },
+        gotStream, getUserMediaError
+    );
+
+    function getUserMediaError() {
+        log("getUserMedia() failed.");
+    }
+
+    function gotStream(stream) {
+        log("Received screen stream.");
+
+        localStream = stream;
+
+        // var video = document.getElementById('video');
+        // video.src = window.URL.createObjectURL(localStream);
+
+        stream.onended = function () {
+            log("screen stream ended.");
+        };
+    }
+
+    deviceManager.once('additionaldatachanged', function (key, value) {
+
+        log('additionaldatachanged : ' + key + ' = ' + value);
+
+        // Channel name from app info additionalData
+        var channelName = deviceManager.getAdditionalData('channelName');
+
+        log('channelName : ' + channelName);
+
+        // Device IP from UPnP or MDNS
+        var deviceIp = device.host;
+
+        // The sender identifier，for example the token from DIAL request
+        var senderId = randomToken();
+
+        var peerConn = null;
+
+        var ws = new PrivWebSocket('ws://' + deviceIp + ':9439/channels/' + channelName + '/senders/' + senderId);
+
+        function createPeerConnection() {
+            log("Creating peer connection");
+
+            var config = {
+                "iceServers": []
+            };
+
+            try {
+                peerConn = new webkitRTCPeerConnection(config);
+            } catch (e) {
+                log("Failed to create PeerConnection, exception: " + e.message);
+            }
+
+            // send any ice candidates to the other peer
+            peerConn.onicecandidate = function (evt) {
+                if (event.candidate) {
+                    log('Sending ICE candidate...');
+                    console.log(evt.candidate);
+
+                    ws.send(JSON.stringify({
+                        type: "candidate",
+                        sdpMLineIndex: evt.candidate.sdpMLineIndex,
+                        sdpMid: evt.candidate.sdpMid,
+                        candidate: evt.candidate.candidate
+                    }));
+
+                } else {
+                    log("End of candidates.");
+                }
+            };
+
+            console.log('Adding local stream...', localStream);
+            peerConn.addStream(localStream);
+
+            peerConn.addEventListener("addstream", onRemoteStreamAdded, false);
+            peerConn.addEventListener("removestream", onRemoteStreamRemoved, false);
+
+            // when remote adds a stream, hand it on to the local video element
+            function onRemoteStreamAdded(event) {
+                console.log("Added remote stream");
+            }
+
+            // when remote removes a stream, remove it from the local video element
+            function onRemoteStreamRemoved(event) {
+                console.log("Remove remote stream");
+            }
+        }
+
+        var audioBandwidth = 50;
+        var videoBandwidth = 10000;
+
+        function setBandwidth(sdp) {
+            sdp = sdp.replace(/a=mid:audio\r\n/g, 'a=mid:audio\r\nb=AS:' + audioBandwidth + '\r\n');
+            sdp = sdp.replace(/a=mid:video\r\n/g, 'a=mid:video\r\nb=AS:' + videoBandwidth + '\r\n');
+            return sdp;
+        }
+
+        // send SDP via socket connection
+        function setLocalAndSendMessage(sessionDescription) {
+            sessionDescription.sdp = setBandwidth(sessionDescription.sdp);
+            peerConn.setLocalDescription(sessionDescription);
+            log("Sending SDP");
+            console.log(sessionDescription);
+            ws.send(JSON.stringify(sessionDescription));
+        }
+
+        function createOfferFailed() {
+            log("Create Answer failed");
+        }
+
+        ws.on('open', function () {
+
+            log('Websocket is open ! start screen sharing ...');
+
+            createPeerConnection();
+
+            var mediaConstraints = {
+                'mandatory': {
+                    'OfferToReceiveAudio': true,
+                    'OfferToReceiveVideo': true
+                }
+            };
+
+            peerConn.createOffer(setLocalAndSendMessage, createOfferFailed, mediaConstraints);
+        });
+
+        ws.on('message', function (data) {
+            log('Websocket on message : ' + data);
+            // console.log("message: ", data);
+        });
+    })
+}
+
+deviceScanner.on('devicefound', function (device) {
+
+    log('Found ' + device.friendlyName);
+
+    var button = $('<button>' + device.friendlyName + '</button>');
+    button.on('click', function () {
+        if (device.sharing) {
+            device.sharing = false;
+            shareScreen(device);
+        } else {
+            device.sharing = true;
+        }
+    });
+
+    $('<li></li>').append(button).appendTo($('.deviceList'));
+});
 
 </script>
 </body>
