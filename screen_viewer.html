@@ -86,10 +86,14 @@
 
                     log('Sender message : ' + message.data);
 
-                    ws.send(JSON.stringify({
+                    respMsg = JSON.stringify({
                         senderId: message.senderId,
                         data: 'Reply : ' + message.data
-                    }));
+                    });
+
+                    log('Response message : ' + respMsg);
+
+                    ws.send(respMsg);
                 }
             };
         });
