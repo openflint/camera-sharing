@@ -70,7 +70,7 @@
 
             ws.onmessage = function (event) {
 
-                console.log(event.data);
+                log('Websocket message : ' + event.data);
 
                 var msg = JSON.parse(event.data);
 
