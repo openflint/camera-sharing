@@ -113,8 +113,8 @@ function shareScreen(device) {
 
     // WebRTC
     navigator.webkitGetUserMedia({
-            audio: false,
-            video: true
+                audio: false,
+                video: true
 //            video: {
 //                mandatory: {
 //                    chromeMediaSource: "screen",
@@ -132,8 +132,8 @@ function shareScreen(device) {
 //                    googImprovedWifiBwe: true
 //                }
 //            }
-        },
-        gotStream, getUserMediaError
+            },
+            gotStream, getUserMediaError
     );
 
     function getUserMediaError() {
@@ -260,10 +260,23 @@ function shareScreen(device) {
         });
 
         ws.on('message', function (data) {
-            console.log('------------------------------');
-            console.log(data);
-            // log('Websocket on message : ' + data);
-            // console.log("message: ", data);
+            var evt = JSON.parse(data);
+
+            if (evt.type === 'answer') {
+                log('Received answer...', evt);
+                log('Setting remote session description...');
+                peerConn.setRemoteDescription(new RTCSessionDescription(evt));
+
+            } else if (evt.type === 'candidate') {
+                log('Received ICE candidate...');
+                var candidate = new RTCIceCandidate({
+                    sdpMLineIndex: evt.sdpMLineIndex,
+                    sdpMid: evt.sdpMid,
+                    candidate: evt.candidate
+                });
+                console.log(candidate);
+                peerConn.addIceCandidate(candidate);
+            }
         });
     })
 }
