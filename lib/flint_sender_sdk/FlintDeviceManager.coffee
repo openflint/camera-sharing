@@ -53,6 +53,9 @@ class FlintDeviceManager extends EventEmitter
             else
                 @_launch(false)
 
+    getAdditionalData: (key) ->
+        @additionalDatas[key]
+
     _launch: (relaunch) ->
         launchType = 'launch'
         launchType = 'relaunch' if relaunch
@@ -113,6 +116,10 @@ class FlintDeviceManager extends EventEmitter
             if items
                 for i in [0 .. items.length - 1]
                     if items[i].tagName
-                        @additionalDatas[items[i].tagName] = items[i].innerHTML
+                        _parseAdditionalDataPair(items[i].tagName, items[i].innerHTML)
+
+    _parseAdditionalDataPair: (key, value) ->
+        @additionalDatas[key] = value
+        @emit 'additionaldatachanged', key, value
 
 module.exports = FlintDeviceManager

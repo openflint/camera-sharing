@@ -100,7 +100,7 @@ class PrivWebSocket
                 if @onmessage
                     @onmessage {data: content.data}
                 else
-                    @emit 'close'
+                    @emit 'message', content.data
 
             else
                 console.log 'Unknow event type : ' + content.type
