@@ -33,6 +33,13 @@ class Bridge extends EventEmitter
             if event.data?.to is 'page-script'
                 @_receive event.data.payload
 
+    call2: (method, params, callback) ->
+        success = (content) =>
+            callback?(true, content)
+        error = (error) =>
+            callback?(false, error)
+        @call(method, params, success, error)
+
     #
     # Generic wrapper for native API calls.
     #
@@ -81,6 +88,7 @@ class Bridge extends EventEmitter
     #
     _receive: (result) ->
         if result.callid
+
             # Handle a response
             if typeof @temporaryAsyncStorage[result.callid] == undefined
                 console.log "Nothing stored for call ID: " + result.callid

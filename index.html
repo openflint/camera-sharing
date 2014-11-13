@@ -8,50 +8,108 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
     <style type="text/css">
-        video {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -100;
+        /*video {*/
+        /*position: fixed;*/
+        /*left: 0;*/
+        /*top: 0;*/
+        /*width: 100%;*/
+        /*height: 100%;*/
+        /*z-index: -100;*/
+        /*}*/
+
+        body, ul {
+            padding: 0;
+            margin: 0;
         }
 
         li {
             list-style: none;
             padding: 0;
-            margin: 0;
+            margin: 10px;
+        }
+
+        button {
+            font-size: 1em;
         }
     </style>
 
-    <script src="dist/flint.js"></script>
-
-    <!--<script src="js/angular.js"></script>-->
-
-    <!--<script src="js/flint_sender_sdk.js"></script>-->
-
+    <script src="js/sockit.js"></script>
+    <script src="js/flint_sender_sdk.js"></script>
+    <script src="js/jquery.min.js"></script>
     <!--<script src="js/getScreenId.js"></script>-->
-    <!--<script src="js/sockit.js"></script>-->
-    <!--<script src="js/ssdp.js"></script>-->
-    <!--<script src="js/controller.js"></script>-->
 </head>
 
 <body>
+
+<ul class="deviceList">
+</ul>
+
 <script>
-    // var ws = new FlintWebSocket("ws://192.168.8.169:9439/channels/demo");
-    var ws = new PrivilegeWebSocket("ws://192.168.1.173:8080/channels/demo");
-    ws.onopen = function () {
-        console.log('PrivilegeWebSocket onopen !');
-    };
-    ws.onclose = function () {
-        console.log('PrivilegeWebSocket onclose !');
-    };
-    ws.onmessage = function (event) {
-        console.log('PrivilegeWebSocket onmessage : ' + event.data);
-    };
-    setInterval(function() {
-        ws.send((new Date).toISOString());
-    }, 2000);
+
+    console.log(window);
+
+    var deviceScanner = new FlintDeviceScanner();
+
+    function shareScreen(device) {
+
+        // TEST PrivXMLHttpRequest
+
+        // var xhr = new PrivXMLHttpRequest();
+        // var url = 'http://' + device.host + ':9431/ssdp/device-desc.xml';
+        // xhr.open("GET", url);
+        // xhr.onreadystatechange = function () {
+        //     if (xhr.readyState == 4) {
+        //         if (200 <= xhr.status && xhr.status < 300) {
+        //             console.log(xhr.responseText);
+        //         }
+        //     }
+        // };
+        // xhr.send();
+
+        // TST PrivWebSocket
+
+        //  var ws = new PrivWebSocket("ws://192.168.8.173:8080/channels/demo");
+        //  ws.onopen = function () {
+        //      console.log('PrivWebSocket onopen !');
+        //  };
+        //  ws.onclose = function () {
+        //      console.log('PrivWebSocket onclose !');
+        //  };
+        //  ws.onmessage = function (event) {
+        //      console.log('PrivWebSocket onmessage : ' + event.data);
+        //  };
+        //
+        //  var timer, count = 0;
+        //  timer = setInterval(function () {
+        //      ws.send((new Date).toISOString());
+        //      if (count++ > 5) {
+        //          clearInterval(timer);
+        //      }
+        //  }, 2000);
+
+        var deviceManager = new FlintDeviceManager(device);
+
+        deviceManager.launch({
+            appId: '~a3ad1b9e-6883-11e4-b116-123b93f75cba',
+            appUrl: 'http://www.baidu.com'
+        });
+    }
+
+    deviceScanner.on('devicefound', function (device) {
+
+        var button = $('<button>' + device.friendlyName + '</button>');
+        button.on('click', function () {
+            if (device.sharing) {
+                device.sharing = false;
+                shareScreen(device);
+            } else {
+                device.sharing = true;
+            }
+        });
+
+        $('<li></li>').append(button).appendTo($('.deviceList'));
+    });
+
 </script>
 </body>
 </html>

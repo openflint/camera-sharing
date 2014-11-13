@@ -4,89 +4,75 @@
     <meta charset="UTF-8">
     <title></title>
     <style>
-        body {
-            background-color: #eee
+        video {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -100;
+        }
+
+        body, ul {
+            background-color: #eee;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            list-style: none;
+            padding: 0;
+            margin: 10px;
+        }
+
+        span {
+            font-size: 1em;
         }
     </style>
-    <script src="//openflint.github.io/screen-sharing-sample/js/peer.js"></script>
     <script src="//openflint.github.io/screen-sharing-sample/js/flint_receiver_sdk.js"></script>
 </head>
 <body>
+<span class="status"></span>
 <video id="video" autoplay></video>
 <script>
 
-    //
-    // FlintReceiverManager
-    // FlintWebsocketChannel
-    // FlintPeer
-
-    console.log('window.FlintReceiverManager', window.FlintReceiverManager);
-
-    // 创建 Receiver 管理器
-    var rmanager = new FlintReceiverManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba');
-
-    // 准备就绪
-    rmanager.on('ready', function () {
-
-        rmanager.setAdditionalData('', '');
-
-        // 创建 Websocket 通道
-        var channel = rmanager.createWebsocketChannel({
-            channelName: 'default'
-        });
-
-        // 接受 Websocket 消息
-        channel.on('message', function (message) {
-            console.log('senderId : ' + message.senderId);
-        });
-
-        // 通道关闭
-        channel.on('close', function (message) {
-        });
-
-        // 创建 WebRTC Peer
-        var peer = new FlintPeer();
-
-        peer.on('open', function (id) {
-
-            console.log("Peer Id = " + id);
-
-            // The WebRTC Data Channel
-            peer.on('connection', function (conn) {
-
-                // Receive messages
-                conn.on('data', function (data) {
-
-                    console.log('Received', data);
-
-                    // Send messages
-                    conn.send('Reply : ' + data);
-                });
-            });
-
-            // Use receiver uuid as peerId
-            // receiverManager.start({ peerId: id });
-
-//            peer.on('call', function (call) {
-//                // Answer the call, providing our mediaStream
-//
-//                console.log("Answer the call, providing our mediaStream");
-//
-//                call.answer();
-//
-//                call.on('stream', function (stream) {
-//                    // `stream` is the MediaStream of the remote peer.
-//                    // Here you'd add it to an HTML video/canvas element.
-//                    var video = document.getElementById('video');
-//                    video.src = window.URL.createObjectURL(stream);
-//                });
-//            });
-        });
+    var manager = new FlintReceiverManager({
+        appId: '~a3ad1b9e-6883-11e4-b116-123b93f75cba'
     });
 
-    // Create peer
-    // var peer = new Peer({ host: 'openflint.duapp.com', path:'/peerjs', port:80 });
+    manager.on('ready', function () {
+        $('.status').innerText = 'READY';
+    });
 
+    // var channel = manager.createWebsocketChannel();
+
+    // var peer = manager.createPeer();
+    //
+    // peer.on('open', function (id) {
+    //
+    //     console.log("Peer Id = " + id);
+    //
+    //     peer.on('connection', function (conn) {
+    //
+    //         // Receive messages
+    //         conn.on('data', function (data) {
+    //             console.log('Received', data);
+    //             // Send messages
+    //             conn.send('Reply : ' + data);
+    //         });
+    //     });
+    //
+    //     peer.on('call', function (call) {
+    //         console.log("Answer the call, providing our mediaStream");
+    //         call.answer();
+    //         call.on('stream', function (stream) {
+    //             // `stream` is the MediaStream of the remote peer.
+    //             // Here you'd add it to an HTML video/canvas element.
+    //             var video = document.getElementById('video');
+    //             video.src = window.URL.createObjectURL(stream);
+    //         });
+    //     });
+    // });
 
 </script>
 </body>
