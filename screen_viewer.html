@@ -49,6 +49,7 @@
 
         manager.on('ready', function () {
             log('FlintReceiverManager is ready !');
+            manager.setAdditionalData('peerId', 'abcdefghijklmn');
         });
 
         manager.start();
