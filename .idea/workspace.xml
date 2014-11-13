@@ -73,21 +73,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="screen_viewer.html" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="screen_viewer.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/screen_viewer.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.32742155" vertical-offset="0" max-vertical-offset="1305">
-              <caret line="16" column="34" selection-start-line="16" selection-start-column="34" selection-end-line="16" selection-end-column="34" />
+            <state vertical-scroll-proportion="-10.0" vertical-offset="225" max-vertical-offset="1305">
+              <caret line="31" column="54" selection-start-line="31" selection-start-column="54" selection-end-line="31" selection-end-column="54" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="FlintReceiverManager.coffee" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="FlintReceiverManager.coffee" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/lib/flint_receiver_sdk/FlintReceiverManager.coffee">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="83" max-vertical-offset="1935">
-              <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.24702774" vertical-offset="188" max-vertical-offset="1950">
+              <caret line="25" column="27" selection-start-line="25" selection-start-column="27" selection-end-line="25" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -155,9 +155,9 @@
         <option value="$PROJECT_DIR$/lib/flint_sender_sdk/Bridge.coffee" />
         <option value="$PROJECT_DIR$/lib/flint_sender_sdk/PrivWebSocket.coffee" />
         <option value="$PROJECT_DIR$/lib/flint_sender_sdk/FlintDeviceManager.coffee" />
-        <option value="$PROJECT_DIR$/lib/flint_receiver_sdk/FlintReceiverManager.coffee" />
         <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/screen_viewer.html" />
+        <option value="$PROJECT_DIR$/lib/flint_receiver_sdk/FlintReceiverManager.coffee" />
       </list>
     </option>
   </component>
@@ -931,18 +931,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/flint_receiver_sdk/FlintReceiverManager.coffee">
+    <entry file="file://$PROJECT_DIR$/screen_viewer.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="83" max-vertical-offset="1935">
-          <caret line="24" column="0" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+        <state vertical-scroll-proportion="-10.0" vertical-offset="225" max-vertical-offset="1305">
+          <caret line="31" column="54" selection-start-line="31" selection-start-column="54" selection-end-line="31" selection-end-column="54" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/screen_viewer.html">
+    <entry file="file://$PROJECT_DIR$/lib/flint_receiver_sdk/FlintReceiverManager.coffee">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.32742155" vertical-offset="0" max-vertical-offset="1305">
-          <caret line="16" column="34" selection-start-line="16" selection-start-column="34" selection-end-line="16" selection-end-column="34" />
+        <state vertical-scroll-proportion="0.24702774" vertical-offset="188" max-vertical-offset="1950">
+          <caret line="25" column="27" selection-start-line="25" selection-start-column="27" selection-end-line="25" selection-end-column="27" />
           <folding />
         </state>
       </provider>

@@ -22,7 +22,8 @@ class WebSocketReadyState
 
 class FlintReceiverManager extends EventEmitter
 
-    constructor: (@appId) ->
+    constructor: (opts) ->
+        @appId = opts.appId
         @wsconn = null
         @wsServer = "ws://127.0.0.1:9431/receiver/" + @appId
 
