@@ -86,97 +86,100 @@
                 } else if (message.type === 'message') {
                     // Handle other message
 
-                    log('Sender message : ' + message.data);
-//
-//                    function createPeerConnection() {
-//
-//                        log("Creating peer connection");
-//
-//                        var pc_config = {
-//                            "iceServers": []
-//                        };
-//
-//                        try {
-//                            peerConn = new PeerConnection(pc_config);
-//                        } catch (e) {
-//                            console.log("Failed to create PeerConnection, exception: " + e.message);
-//                        }
-//
-//                        // send any ice candidates to the other peer
-//                        peerConn.onicecandidate = function (evt) {
-//                            if (evt.candidate) {
-//                                log('Sending ICE candidate...');
-//                                log(JSON.stringify(evt));
-//                                ws.send(JSON.stringify({
-//                                    type: "candidate",
-//                                    sdpMLineIndex: evt.candidate.sdpMLineIndex,
-//                                    sdpMid: evt.candidate.sdpMid,
-//                                    candidate: evt.candidate.candidate
-//                                }));
-//                            } else {
-//                                log("End of candidates.");
-//                            }
-//                        };
-//
-//                        peerConn.addEventListener("addstream", onRemoteStreamAdded, false);
-//                        peerConn.addEventListener("removestream", onRemoteStreamRemoved, false);
-//
-//                        // when remote adds a stream, hand it on to the local video element
-//                        function onRemoteStreamAdded(event) {
-//                            log("Added remote stream");
-//                            video.src = window.URL.createObjectURL(event.stream);
-//                        }
-//
-//                        // when remote removes a stream, remove it from the local video element
-//                        function onRemoteStreamRemoved(event) {
-//                            console.log("Remove remote stream");
-//                            video.src = "";
-//                        }
-//                    }
-//
-//                    // send SDP via socket connection
-//                    function setLocalAndSendMessage(sessionDescription) {
-//                        sessionDescription.sdp = setBandwidth(sessionDescription.sdp);
-//                        log("setLocalAndSendMessage: Sending: SDP");
-//                        log(JSON.stringify(sessionDescription));
-//                        peerConn.setLocalDescription(sessionDescription);
-//                        ws.send(JSON.stringify(sessionDescription));
-//                    }
-//
-//                    function createAnswerFailed() {
-//                        console.log("Create Answer failed");
-//                    }
-//
-//                    if (evt.type === 'offer') {
-//
-//                        log("Received offer...");
-//
-//                        createPeerConnection();
-//
-//                        log('Creating remote session description...');
-//
-//                        peerConn.setRemoteDescription(new SessionDescription(evt), function () {
-//                            log('Sending answer...');
-//                            var mediaConstraints = {
-//                                'mandatory': {
-//                                    'OfferToReceiveAudio': false,
-//                                    'OfferToReceiveVideo': true
-//                                }
-//                            };
-//                            peerConn.createAnswer(setLocalAndSendMessage, createAnswerFailed, mediaConstraints);
-//                        });
-//
-//                    } else if (evt.type === 'candidate') {
-//                        log('Received ICE candidate...');
-//                        var candidate = new RTCIceCandidate({
-//                            sdpMLineIndex: evt.sdpMLineIndex,
-//                            sdpMid: evt.sdpMid,
-//                            candidate: evt.candidate
-//                        });
-//                        console.log(candidate);
-//                        peerConn.addIceCandidate(candidate);
-//                    }
-//
+                    // log('Sender message : ' + message.data);
+
+                    var evt = JSON.parse(message.data);
+
+
+                    function createPeerConnection() {
+
+                        log("Creating peer connection");
+
+                        var pc_config = {
+                            "iceServers": []
+                        };
+
+                        try {
+                            peerConn = new PeerConnection(pc_config);
+                        } catch (e) {
+                            console.log("Failed to create PeerConnection, exception: " + e.message);
+                        }
+
+                        // send any ice candidates to the other peer
+                        peerConn.onicecandidate = function (evt) {
+                            if (evt.candidate) {
+                                log('Sending ICE candidate...');
+                                log(JSON.stringify(evt));
+                                ws.send(JSON.stringify({
+                                    type: "candidate",
+                                    sdpMLineIndex: evt.candidate.sdpMLineIndex,
+                                    sdpMid: evt.candidate.sdpMid,
+                                    candidate: evt.candidate.candidate
+                                }));
+                            } else {
+                                log("End of candidates.");
+                            }
+                        };
+
+                        peerConn.addEventListener("addstream", onRemoteStreamAdded, false);
+                        peerConn.addEventListener("removestream", onRemoteStreamRemoved, false);
+
+                        // when remote adds a stream, hand it on to the local video element
+                        function onRemoteStreamAdded(event) {
+                            log("Added remote stream");
+                            video.src = window.URL.createObjectURL(event.stream);
+                        }
+
+                        // when remote removes a stream, remove it from the local video element
+                        function onRemoteStreamRemoved(event) {
+                            console.log("Remove remote stream");
+                            video.src = "";
+                        }
+                    }
+
+                    // send SDP via socket connection
+                    function setLocalAndSendMessage(sessionDescription) {
+                        sessionDescription.sdp = setBandwidth(sessionDescription.sdp);
+                        log("setLocalAndSendMessage: Sending: SDP");
+                        log(JSON.stringify(sessionDescription));
+                        peerConn.setLocalDescription(sessionDescription);
+                        ws.send(JSON.stringify(sessionDescription));
+                    }
+
+                    function createAnswerFailed() {
+                        console.log("Create Answer failed");
+                    }
+
+                    if (evt.type === 'offer') {
+
+                        log("Received offer...");
+
+                        createPeerConnection();
+
+                        log('Creating remote session description...');
+
+                        peerConn.setRemoteDescription(new SessionDescription(evt), function () {
+                            log('Sending answer...');
+                            var mediaConstraints = {
+                                'mandatory': {
+                                    'OfferToReceiveAudio': false,
+                                    'OfferToReceiveVideo': true
+                                }
+                            };
+                            peerConn.createAnswer(setLocalAndSendMessage, createAnswerFailed, mediaConstraints);
+                        });
+
+                    } else if (evt.type === 'candidate') {
+                        log('Received ICE candidate...');
+                        var candidate = new RTCIceCandidate({
+                            sdpMLineIndex: evt.sdpMLineIndex,
+                            sdpMid: evt.sdpMid,
+                            candidate: evt.candidate
+                        });
+                        console.log(candidate);
+                        peerConn.addIceCandidate(candidate);
+                    }
+
 
 //                    respMsg = JSON.stringify({
 //                        senderId: message.senderId,
