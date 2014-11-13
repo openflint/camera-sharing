@@ -195,11 +195,7 @@
             }
 
             ws.on('open', function () {
-                log('Websocket is open !');
-
-                ws.send("[ Message from sender-0 ] " + count);
-
-                log('Start screen sharing ...');
+                log('Websocket is open ! start screen sharing ...');
 
                 createPeerConnection();
 
