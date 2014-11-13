@@ -69,11 +69,13 @@
                 log('Websocket cause error ' + JSON.stringify(error));
             };
 
-            ws.onmessage = function (message) {
+            ws.onmessage = function (event) {
+
+                var message = JSON.parse(event.data);
 
                 if (message.type === 'senderConnected') {
                     // Handle new sender connected event
-                    log('Sender connected : ' + msg.senderId);
+                    log('Sender connected : ' + message.senderId);
 
                 } else if (message.type === 'senderDisconnected') {
                     // Handle sender lost event
@@ -84,10 +86,10 @@
 
                     log('Sender message : ' + message.data);
 
-                    ws.send({
+                    ws.send(JSON.stringify({
                         senderId: msg.senderId,
                         data: 'Reply : ' + msg.data
-                    });
+                    }));
                 }
             };
         });
