@@ -236,6 +236,10 @@ FlintDeviceManager = (function(_super) {
     })(this));
   };
 
+  FlintDeviceManager.prototype.getAdditionalData = function(key) {
+    return this.additionalDatas[key];
+  };
+
   FlintDeviceManager.prototype._launch = function(relaunch) {
     var launchType, params;
     launchType = 'launch';
@@ -314,7 +318,7 @@ FlintDeviceManager = (function(_super) {
         _results = [];
         for (i = _i = 0, _ref = items.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
           if (items[i].tagName) {
-            _results.push(this.additionalDatas[items[i].tagName] = items[i].innerHTML);
+            _results.push(_parseAdditionalDataPair(items[i].tagName, items[i].innerHTML));
           } else {
             _results.push(void 0);
           }
@@ -322,6 +326,11 @@ FlintDeviceManager = (function(_super) {
         return _results;
       }
     }
+  };
+
+  FlintDeviceManager.prototype._parseAdditionalDataPair = function(key, value) {
+    this.additionalDatas[key] = value;
+    return this.emit('additionaldatachanged', key, value);
   };
 
   return FlintDeviceManager;
@@ -628,7 +637,7 @@ PrivWebSocket = (function() {
             data: content.data
           });
         } else {
-          return this.emit('close');
+          return this.emit('message', content.data);
         }
         break;
       default:
