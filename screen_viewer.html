@@ -59,10 +59,10 @@
 
             var ws = new WebSocket('ws://127.0.0.1:9439/channels/' + channelName);
 
-            manager.setAdditionalData('channelName', channelName);
-
             ws.onopen = function () {
                 log('Websocket is opend');
+
+                manager.setAdditionalData('channelName', channelName);
             };
 
             ws.onerror = function (error) {
