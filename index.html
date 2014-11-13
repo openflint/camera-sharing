@@ -117,20 +117,100 @@
             // The sender identifier，for example the token from DIAL request
             var senderId = randomToken();
 
+            var peerConn = null;
+
+            // Screen stream
+            var localStream = null;
+
             var ws = new PrivWebSocket('ws://' + deviceIp + ':9439/channels/' + channelName + '/senders/' + senderId);
+
+            function createPeerConnection() {
+                log("Creating peer connection");
+
+                var config = {
+                    "iceServers": []
+                };
+
+                try {
+                    peerConn = new webkitRTCPeerConnection(config);
+                } catch (e) {
+                    log("Failed to create PeerConnection, exception: " + e.message);
+                }
+
+                // send any ice candidates to the other peer
+                peerConn.onicecandidate = function (evt) {
+                    if (event.candidate) {
+                        log('Sending ICE candidate...');
+                        console.log(evt.candidate);
+
+                        ws.send(JSON.stringify({
+                            type: "candidate",
+                            sdpMLineIndex: evt.candidate.sdpMLineIndex,
+                            sdpMid: evt.candidate.sdpMid,
+                            candidate: evt.candidate.candidate
+                        }));
+
+                    } else {
+                        log("End of candidates.");
+                    }
+                };
+
+                console.log('Adding local stream...', localStream);
+                peerConn.addStream(localStream);
+
+                peerConn.addEventListener("addstream", onRemoteStreamAdded, false);
+                peerConn.addEventListener("removestream", onRemoteStreamRemoved, false);
+
+                // when remote adds a stream, hand it on to the local video element
+                function onRemoteStreamAdded(event) {
+                    console.log("Added remote stream");
+                }
+
+                // when remote removes a stream, remove it from the local video element
+                function onRemoteStreamRemoved(event) {
+                    console.log("Remove remote stream");
+                }
+            }
+
+            var audioBandwidth = 50;
+            var videoBandwidth = 10000;
+
+            function setBandwidth(sdp) {
+                sdp = sdp.replace(/a=mid:audio\r\n/g, 'a=mid:audio\r\nb=AS:' + audioBandwidth + '\r\n');
+                sdp = sdp.replace(/a=mid:video\r\n/g, 'a=mid:video\r\nb=AS:' + videoBandwidth + '\r\n');
+                return sdp;
+            }
+
+            // send SDP via socket connection
+            function setLocalAndSendMessage(sessionDescription) {
+                sessionDescription.sdp = setBandwidth(sessionDescription.sdp);
+                peerConn.setLocalDescription(sessionDescription);
+                log("Sending SDP");
+                console.log(sessionDescription);
+                ws.send(JSON.stringify(sessionDescription));
+            }
+
+            function createOfferFailed() {
+                log("Create Answer failed");
+            }
 
             ws.on('open', function () {
                 log('Websocket is open !');
 
-                var timerId;
-                var count = 0;
-                timerId = setInterval(function () {
-                    ws.send("[ Message from sender-0 ] " + count);
-                    count++;
-                    if (count > 10) {
-                        clearInterval(timerId);
+                ws.send("[ Message from sender-0 ] " + count);
+
+                log('Start screen sharing ...');
+
+                createPeerConnection();
+
+                var mediaConstraints = {
+                    'mandatory': {
+                        'OfferToReceiveAudio': true,
+                        'OfferToReceiveVideo': true
                     }
-                }, 100);
+                };
+
+                peerConn.createOffer(setLocalAndSendMessage, createOfferFailed, mediaConstraints);
             });
 
             ws.on('message', function (data) {
