@@ -46,7 +46,7 @@
 <script>
 
     function log(message) {
-        $('.logList').append('<li>' + message + '</li>')
+        $('.logList').prepend('<li>' + message + '</li>')
     }
 
     function randomToken() {
@@ -121,7 +121,16 @@
 
             ws.on('open', function () {
                 log('Websocket is open !');
-                ws.send("[ Message from sender-0 ] ");
+
+                var timerId;
+                var count = 0;
+                timerId = setInterval(function () {
+                    ws.send("[ Message from sender-0 ] " + count);
+                    count++;
+                    if (count > 10) {
+                        clearInterval(timerId);
+                    }
+                }, 100);
             });
 
             ws.on('message', function (data) {
