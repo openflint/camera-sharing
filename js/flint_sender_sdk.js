@@ -299,7 +299,7 @@ FlintDeviceManager = (function(_super) {
   };
 
   FlintDeviceManager.prototype._parseStatus = function(status) {
-    var additionalData, doc, i, items, lines, link, parser, responseText, _i, _ref, _results;
+    var additionalData, doc, i, items, lines, link, parser, responseText, _i, _ref;
     lines = status.split('\n');
     lines.splice(0, 1);
     responseText = lines.join('');
@@ -315,15 +315,11 @@ FlintDeviceManager = (function(_super) {
     if ((additionalData != null ? additionalData.length : void 0) > 0) {
       items = additionalData[0].childNodes;
       if (items) {
-        _results = [];
         for (i = _i = 0, _ref = items.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
           if (items[i].tagName) {
-            _results.push(_parseAdditionalDataPair(items[i].tagName, items[i].innerHTML));
-          } else {
-            _results.push(void 0);
+            this._parseAdditionalDataPair(items[i].tagName, items[i].innerHTML);
           }
         }
-        return _results;
       }
     }
   };
@@ -511,11 +507,17 @@ module.exports = NativeMethods;
 
 
 },{}],7:[function(require,module,exports){
-var Bridge, PrivWebSocket;
+var Bridge, EventEmitter, PrivWebSocket,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+EventEmitter = require('eventemitter3');
 
 Bridge = require('./Bridge');
 
-PrivWebSocket = (function() {
+PrivWebSocket = (function(_super) {
+  __extends(PrivWebSocket, _super);
+
   function PrivWebSocket(url) {
     var error, success;
     this.url = url;
@@ -647,18 +649,24 @@ PrivWebSocket = (function() {
 
   return PrivWebSocket;
 
-})();
+})(EventEmitter);
 
 module.exports = PrivWebSocket;
 
 
 
-},{"./Bridge":2}],8:[function(require,module,exports){
-var Bridge, PrivXMLHttpRequest;
+},{"./Bridge":2,"eventemitter3":11}],8:[function(require,module,exports){
+var Bridge, EventEmitter, PrivXMLHttpRequest,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+EventEmitter = require('eventemitter3');
 
 Bridge = require('./Bridge');
 
-PrivXMLHttpRequest = (function() {
+PrivXMLHttpRequest = (function(_super) {
+  __extends(PrivXMLHttpRequest, _super);
+
   function PrivXMLHttpRequest(objParameters) {
     var error, success;
     this.objParameters = objParameters;
@@ -786,13 +794,13 @@ PrivXMLHttpRequest = (function() {
 
   return PrivXMLHttpRequest;
 
-})();
+})(EventEmitter);
 
 module.exports = PrivXMLHttpRequest;
 
 
 
-},{"./Bridge":2}],9:[function(require,module,exports){
+},{"./Bridge":2,"eventemitter3":11}],9:[function(require,module,exports){
 var EventEmitter, SSDP_ADDRESS, SSDP_DISCOVER_MX, SSDP_DISCOVER_PACKET, SSDP_HEADER, SSDP_PORT, SSDP_RESPONSE_HEADER, SimpleServiceDiscovery,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };

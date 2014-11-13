@@ -60,6 +60,14 @@
 
             manager.setAdditionalData('channelName', channelName);
 
+            ws.onopen = function () {
+                log('Websocket is opend');
+            };
+
+            ws.onerror = function (error) {
+                log('Websocket cause error ' + JSON.stringify(error));
+            };
+
             ws.onmessage = function (event) {
 
                 console.log(event.data);

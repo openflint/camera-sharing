@@ -14,12 +14,14 @@
 # limitations under the License.
 #
 
+EventEmitter = require 'eventemitter3'
+
 Bridge = require './Bridge'
 
 #
 # PrivilegeWebSocket is a proxy for extensions
 #
-class PrivWebSocket
+class PrivWebSocket extends EventEmitter
 
     constructor: (@url) ->
         @bridge = Bridge.getInstance()

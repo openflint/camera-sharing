@@ -14,12 +14,13 @@
 # limitations under the License.
 #
 
+EventEmitter = require 'eventemitter3'
 Bridge = require './Bridge'
 
 #
 # Privilege XMLHttpRequest is a proxy for extensions
 #
-class PrivXMLHttpRequest
+class PrivXMLHttpRequest extends EventEmitter
 
     constructor: (@objParameters) ->
         @bridge = Bridge.getInstance()

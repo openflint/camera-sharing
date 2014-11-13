@@ -116,7 +116,8 @@ class FlintDeviceManager extends EventEmitter
             if items
                 for i in [0 .. items.length - 1]
                     if items[i].tagName
-                        _parseAdditionalDataPair(items[i].tagName, items[i].innerHTML)
+                        @_parseAdditionalDataPair(items[i].tagName, items[i].innerHTML)
+        return
 
     _parseAdditionalDataPair: (key, value) ->
         @additionalDatas[key] = value
