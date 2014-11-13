@@ -84,6 +84,8 @@
                     // Handle new sender connected event
                     log('Sender connected : ' + message.senderId);
 
+                    ws.send('You are sender : ' + message.senderId);
+
                 } else if (message.type === 'senderDisconnected') {
                     // Handle sender lost event
                     log('Sender disconnected : ' + message.senderId);
@@ -94,7 +96,6 @@
                     // log('Sender message : ' + message.data);
 
                     var evt = JSON.parse(message.data);
-
 
                     function createPeerConnection() {
 
