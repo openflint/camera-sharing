@@ -27,13 +27,12 @@ class FlintReceiverManager extends EventEmitter
     constructor: (opts) ->
         @appId = opts.appId
         @wsconn = null
+        @additionalData = {}
         @wsServer = "ws://127.0.0.1:9431/receiver/" + @appId
 
-    start: (additionalData) ->
+    start: ->
         return if (@wsconn?.readyState is WebSocketReadyState.CONNECTING)
         return if (@wsconn?.readyState is WebSocketReadyState.OPEN)
-
-        @additionalData = additionalData
 
         @wsconn = new WebSocket(@wsServer)
 
@@ -53,11 +52,11 @@ class FlintReceiverManager extends EventEmitter
                 message: "Underlying websocket is not open"
                 socketReadyState: evt.target.readyState
 
-    setAdditionalData: (additionalData) ->
-        @additionalData = additionalData
+    setAdditionalData: (key, value) ->
+        @additionalData[key] = value
         @send
             type: "additionaldata"
-            additionaldata: @additionalData
+            additionaldata: JSON.stringify(@additionalData)
 
     # Send message to Fling Daemon
     # @param {JSON objects}
@@ -87,7 +86,7 @@ class FlintReceiverManager extends EventEmitter
     _onSenderDisconnected: (data) ->
 
     _onMessage: (data) ->
-        console.error "_onMessage", data
+        console.log "_onMessage", data
 
         switch data?.type
 
@@ -98,10 +97,6 @@ class FlintReceiverManager extends EventEmitter
                 @localIpAddress = data["service_info"]["ip"][0]
                 @uuid = data["service_info"]["uuid"]
                 @deviceName = data["service_info"]["device_name"]
-                console.info("=========================================>flingd has onopened: ", ("onopend" in self));
-                @send
-                    type: "additionaldata"
-                    additionaldata: @additionalData
                 @emit 'ready'
 
             when 'heartbeat'
