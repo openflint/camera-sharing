@@ -229,7 +229,7 @@ function shareScreen(device) {
 
             // send any ice candidates to the other peer
             peerConn.onicecandidate = function (evt) {
-                if (event.candidate) {
+                if (evt.candidate) {
                     log('Sending ICE candidate...');
                     console.log(evt.candidate);
 
