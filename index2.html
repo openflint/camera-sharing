@@ -45,6 +45,8 @@
 
 <script>
 
+window.RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+
 function log(message) {
     $('.logList').prepend('<li>' + message + '</li>')
 }
@@ -219,7 +221,7 @@ function shareScreen(device) {
             };
 
             try {
-                peerConn = new webkitRTCPeerConnection(config);
+                peerConn = new RTCPeerConnection(config);
             } catch (e) {
                 log("Failed to create PeerConnection, exception: " + e.message);
             }
