@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        video {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: -100;
+        }
+
+        body, ul {
+            color: #fff;
+            padding: 0;
+            margin: 0;
+        }
+
+        .logList {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+        }
+
+        li {
+            list-style: none;
+            padding: 0;
+            margin: 10px;
+        }
+
+        span {
+            font-size: 1em;
+        }
+    </style>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/flint_receiver_sdk.js"></script>
+</head>
+<body>
+<video id="video" autoplay></video>
+<ul class="logList"></ul>
+<script>
+
+var PeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+var SessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription;
+var RTCIceCandidate = window.RTCIceCandidate || window.mozRTCIceCandidate;
+
+var video = document.getElementById('video');
+
+function log(message) {
+    $('.logList').prepend('<li>' + message + '</li>')
+}
+
+function randomToken() {
+    return Math.random().toString(36).substr(2);
+}
+
+try {
+    var manager = new FlintReceiverManager({
+        appId: '~a3ad1b9e-6883-11e4-b116-123b93f75cba'
+    });
+
+    manager.on('ready', function () {
+
+        log('FlintReceiverManager is ready !');
+
+        var channelName = randomToken();
+
+        var ws = new WebSocket('ws://127.0.0.1:9439/channels/' + channelName);
+
+        ws.onopen = function () {
+            log('Websocket is opend');
+
+            manager.setAdditionalData('channelName', channelName);
+        };
+
+        ws.onerror = function (error) {
+            log('Websocket cause error ');
+            console.log(error);
+        };
+
+        ws.onmessage = function (event) {
+
+            var message = JSON.parse(event.data);
+
+            if (message.type === 'senderConnected') {
+                // Handle new sender connected event
+                log('Sender connected : ' + message.senderId);
+
+            } else if (message.type === 'senderDisconnected') {
+                // Handle sender lost event
+                log('Sender disconnected : ' + message.senderId);
+
+            } else if (message.type === 'message') {
+                // Handle other message
+
+                // log('Sender message : ' + message.data);
+
+                var evt = JSON.parse(message.data);
+
+                function createPeerConnection() {
+
+                    log("Creating peer connection");
+
+                    var pc_config = {
+                        "iceServers": []
+                    };
+
+                    try {
+                        peerConn = new PeerConnection(pc_config);
+                    } catch (e) {
+                        console.log("Failed to create PeerConnection, exception: " + e.message);
+                    }
+
+                    // send any ice candidates to the other peer
+                    peerConn.onicecandidate = function (evt) {
+                        if (evt.candidate) {
+                            log('Sending ICE candidate...');
+                            log(JSON.stringify(evt));
+                            ws.send(JSON.stringify({
+                                senderId: message.senderId,
+                                data: JSON.stringify({
+                                    type: "candidate",
+                                    sdpMLineIndex: evt.candidate.sdpMLineIndex,
+                                    sdpMid: evt.candidate.sdpMid,
+                                    candidate: evt.candidate.candidate
+                                })
+                            }));
+                        } else {
+                            log("End of candidates.");
+                        }
+                    };
+
+                    peerConn.addEventListener("addstream", onRemoteStreamAdded, false);
+                    peerConn.addEventListener("removestream", onRemoteStreamRemoved, false);
+
+                    // when remote adds a stream, hand it on to the local video element
+                    function onRemoteStreamAdded(event) {
+                        log("Added remote stream");
+
+                        var moz = !!navigator.mozGetUserMedia;
+                        video[moz ? 'mozSrcObject' : 'src'] = moz ? event.stream : window.URL.createObjectURL(event.stream);
+                    }
+
+                    // when remote removes a stream, remove it from the local video element
+                    function onRemoteStreamRemoved(event) {
+                        console.log("Remove remote stream");
+                        video.src = "";
+                    }
+                }
+
+                var audioBandwidth = 50;
+                var videoBandwidth = 10000;
+
+                function setBandwidth(sdp) {
+                    sdp = sdp.replace(/a=mid:audio\r\n/g, 'a=mid:audio\r\nb=AS:' + audioBandwidth + '\r\n');
+                    sdp = sdp.replace(/a=mid:video\r\n/g, 'a=mid:video\r\nb=AS:' + videoBandwidth + '\r\n');
+                    return sdp;
+                }
+
+                // send SDP via socket connection
+                function setLocalAndSendMessage(sessionDescription) {
+                    sessionDescription.sdp = setBandwidth(sessionDescription.sdp);
+                    log("setLocalAndSendMessage: Sending: SDP");
+                    log(JSON.stringify(sessionDescription));
+                    peerConn.setLocalDescription(sessionDescription);
+                    ws.send(JSON.stringify({
+                        senderId: message.senderId,
+                        data: JSON.stringify(sessionDescription)
+                    }));
+                }
+
+                function createAnswerFailed() {
+                    console.log("Create Answer failed");
+                }
+
+                if (evt.type === 'offer') {
+
+                    log("Received offer...");
+
+                    createPeerConnection();
+
+                    log('Creating remote session description...');
+
+                    peerConn.setRemoteDescription(new SessionDescription(evt), function () {
+                        log('Sending answer...');
+                        var mediaConstraints = {
+                            'mandatory': {
+                                'OfferToReceiveAudio': false,
+                                'OfferToReceiveVideo': true
+                            }
+                        };
+                        peerConn.createAnswer(setLocalAndSendMessage, createAnswerFailed, mediaConstraints);
+                    });
+
+                } else if (evt.type === 'candidate') {
+                    log('Received ICE candidate...');
+                    var candidate = new RTCIceCandidate({
+                        sdpMLineIndex: evt.sdpMLineIndex,
+                        sdpMid: evt.sdpMid,
+                        candidate: evt.candidate
+                    });
+                    console.log(candidate);
+                    peerConn.addIceCandidate(candidate);
+                }
+
+
+//                    respMsg = JSON.stringify({
+//                        senderId: message.senderId,
+//                        data: 'Reply : ' + message.data
+//                    });
+//
+//                    log('Response message : ' + respMsg);
+//
+//                    ws.send(respMsg);
+            }
+        };
+    });
+
+    manager.start();
+
+    log('FlintReceiverManager is started !');
+
+} catch (e) {
+    log(e.toString());
+}
+
+// var channel = manager.createWebsocketChannel();
+
+// var peer = manager.createPeer();
+//
+// peer.on('open', function (id) {
+//
+//     console.log("Peer Id = " + id);
+//
+//     peer.on('connection', function (conn) {
+//
+//         // Receive messages
+//         conn.on('data', function (data) {
+//             console.log('Received', data);
+//             // Send messages
+//             conn.send('Reply : ' + data);
+//         });
+//     });
+//
+//     peer.on('call', function (call) {
+//         console.log("Answer the call, providing our mediaStream");
+//         call.answer();
+//         call.on('stream', function (stream) {
+//             // `stream` is the MediaStream of the remote peer.
+//             // Here you'd add it to an HTML video/canvas element.
+//             var video = document.getElementById('video');
+//             video.src = window.URL.createObjectURL(stream);
+//         });
+//     });
+// });
+
+</script>
+</body>
+</html>

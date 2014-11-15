@@ -74,13 +74,14 @@ getScreenId(function (error, sourceId, screen_constraints) {
 
     screen_constraints = {
         "audio": false,
-        "video": {
-            "mozMediaSource": "window",
-            "mediaSource": "window",
-            "maxWidth": 1920,
-            "maxHeight": 1080,
-            "minAspectRatio": 1.77
-        }
+        "video": true
+//    {
+//            "mozMediaSource": "window",
+//            "mediaSource": "window",
+//            "maxWidth": 1920,
+//            "maxHeight": 1080,
+//            "minAspectRatio": 1.77
+//        }
     };
 
     navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
@@ -145,7 +146,7 @@ function shareScreen(device) {
 
     deviceManager.launch({
         appId: '~a3ad1b9e-6883-11e4-b116-123b93f75cba',
-        appUrl: 'http://openflint.github.io/screen-sharing-sample/screen_viewer.html',
+        appUrl: 'http://openflint.github.io/screen-sharing-sample/screen_viewer2.html',
         relaunchIfRunning: true
     });
 
