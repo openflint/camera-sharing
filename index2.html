@@ -46,6 +46,7 @@
 <script>
 
 window.RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+window.SessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription
 
 function log(message) {
     $('.logList').prepend('<li>' + message + '</li>')
@@ -306,7 +307,7 @@ function shareScreen(device) {
             if (evt.type === 'answer') {
                 log('Received answer...', evt);
                 log('Setting remote session description...');
-                peerConn.setRemoteDescription(new RTCSessionDescription(evt));
+                peerConn.setRemoteDescription(new SessionDescription(evt));
 
             } else if (evt.type === 'candidate') {
                 log('Received ICE candidate...');
