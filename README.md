@@ -1,7 +1,9 @@
 ## Overview
 * Using WebRCT to do media mirroring, now only available on Mac OS
 * Support Firefox Browser and Chrome Browser to mirror screen or webcam to Matchstick dongle
+
 =======================
+
 ## Install Introduction
 ### Install SockIt NPAPI Plugin
 * Download (http://openflint.github.io/screen-sharing-sample/downloads/SockIt.plugin.zip) to your Mac
