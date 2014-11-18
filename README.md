@@ -20,4 +20,4 @@
 
 ## Run
 * Camera Sharing: (https://openflint.github.io/screen-sharing-sample/camera.html)
-* Screen Sharing: (https://openflint.github.io/screen-sharing-sample/index2.html)
+* Screen Sharing: (https://openflint.github.io/screen-sharing-sample/index.html)

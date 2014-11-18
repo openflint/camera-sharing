@@ -45,6 +45,9 @@
 
 <script>
 
+window.RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+window.SessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription
+
 function log(message) {
     $('.logList').prepend('<li>' + message + '</li>')
 }
@@ -69,6 +72,20 @@ getScreenId(function (error, sourceId, screen_constraints) {
     console.log(error);
     console.log(sourceId);
     console.log(screen_constraints);
+
+    // Firefox
+    if (!!navigator.mozGetUserMedia) {
+        screen_constraints = {
+            "audio": false,
+            "video": {
+                "mozMediaSource": "window",
+                "mediaSource": "window",
+                "maxWidth": 1920,
+                "maxHeight": 1080,
+                "minAspectRatio": 1.77
+            }
+        };
+    }
 
     navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
     navigator.getUserMedia(screen_constraints, function (stream) {
@@ -208,7 +225,7 @@ function shareScreen(device) {
             };
 
             try {
-                peerConn = new webkitRTCPeerConnection(config);
+                peerConn = new RTCPeerConnection(config);
             } catch (e) {
                 log("Failed to create PeerConnection, exception: " + e.message);
             }
@@ -292,7 +309,7 @@ function shareScreen(device) {
             if (evt.type === 'answer') {
                 log('Received answer...', evt);
                 log('Setting remote session description...');
-                peerConn.setRemoteDescription(new RTCSessionDescription(evt));
+                peerConn.setRemoteDescription(new SessionDescription(evt));
 
             } else if (evt.type === 'candidate') {
                 log('Received ICE candidate...');

@@ -50,7 +50,8 @@ var RTCIceCandidate = window.RTCIceCandidate || window.mozRTCIceCandidate;
 var video = document.getElementById('video');
 
 function log(message) {
-    $('.logList').prepend('<li>' + message + '</li>')
+    // $('.logList').prepend('<li>' + message + '</li>')
+    console.log(message);
 }
 
 function randomToken() {
@@ -139,7 +140,9 @@ try {
                     // when remote adds a stream, hand it on to the local video element
                     function onRemoteStreamAdded(event) {
                         log("Added remote stream");
-                        video.src = window.URL.createObjectURL(event.stream);
+
+                        var moz = !!navigator.mozGetUserMedia;
+                        video[moz ? 'mozSrcObject' : 'src'] = moz ? event.stream : window.URL.createObjectURL(event.stream);
                     }
 
                     // when remote removes a stream, remove it from the local video element
