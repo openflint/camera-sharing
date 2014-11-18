@@ -50,7 +50,8 @@ var RTCIceCandidate = window.RTCIceCandidate || window.mozRTCIceCandidate;
 var video = document.getElementById('video');
 
 function log(message) {
-    $('.logList').prepend('<li>' + message + '</li>')
+    // $('.logList').prepend('<li>' + message + '</li>')
+    console.log(message);
 }
 
 function randomToken() {
