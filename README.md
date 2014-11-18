@@ -19,5 +19,5 @@
 * Open and install the [FlintAssistant Extension](https://chrome.google.com/webstore/detail/flintassistant/kmnbggjdpmlebbopiejmoddkkhhjichj?hl=en-US) to support XHR and WebSocket cross origin access in HTTPS
 
 ## Run
-* Camera Sharing: (https://openflint.github.io/screen-sharing-sample/index2.html)
-* Screen Sharing: (https://openflint.github.io/screen-sharing-sample/camera.html)
+* Camera Sharing: (https://openflint.github.io/screen-sharing-sample/camera.html)
+* Screen Sharing: (https://openflint.github.io/screen-sharing-sample/index2.html)
