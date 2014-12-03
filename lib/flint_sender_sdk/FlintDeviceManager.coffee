@@ -24,7 +24,7 @@ class FlintDeviceManager extends EventEmitter
     constructor: (@device) ->
         @bridge = Bridge.getInstance()
         @launched = false
-        @useIpc = false
+        @useIpc = true
         @maxInactive = -1
         @additionalDatas = {}
         @token = null
