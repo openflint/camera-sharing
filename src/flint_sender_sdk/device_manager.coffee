@@ -62,7 +62,7 @@ class FlingApplication extends EventEmitter
         @id = opts.appId
         @url = opts.appUrl
         @connected = false
-        @useIpc = opts.useIpc or false
+        @useIpc = opts.useIpc or true
         @maxInactive = opts.maxInactive or -1
         @additionalDatas = {}
         @token = null
