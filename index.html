@@ -34,7 +34,8 @@
     </style>
 
     <script src="js/sockit.js"></script>
-    <script src="js/flint_sender_sdk.js"></script>
+    <script src="//openflint.github.io/flint-web-sdk/out/flint_sender_sdk.js"></script>
+    <!--<script src="//127.0.0.1:8080/flint/flint-web-sdk/out/flint_sender_sdk.js"></script>-->
     <script src="js/jquery.min.js"></script>
     <script src="js/getScreenId.js"></script>
 </head>
@@ -45,302 +46,132 @@
 
 <script>
 
-window.RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
-window.SessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription
+    window.RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+    window.SessionDescription = window.RTCSessionDescription || window.mozRTCSessionDescription || window.webkitRTCSessionDescription
 
-function log(message) {
-    $('.logList').prepend('<li>' + message + '</li>')
-}
-
-function randomToken() {
-    return Math.random().toString(36).substr(2);
-}
-
-var deviceScanner = new FlintDeviceScanner();
-
-// Screen stream
-var localStream = null;
-
-var screenWidth = 1280; //window.screen.width;
-var screenHeight = 720; //window.screen.height;
-
-console.log(window.screen.width);
-console.log(window.screen.height);
-
-getScreenId(function (error, sourceId, screen_constraints) {
-
-    console.log(error);
-    console.log(sourceId);
-    console.log(screen_constraints);
-
-    // Firefox
-    if (!!navigator.mozGetUserMedia) {
-        screen_constraints = {
-            "audio": false,
-            "video": {
-                "mozMediaSource": "window",
-                "mediaSource": "window",
-                "maxWidth": 1920,
-                "maxHeight": 1080,
-                "minAspectRatio": 1.77
-            }
-        };
+    function log(message) {
+        $('.logList').prepend('<li>' + message + '</li>')
     }
 
-    navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-    navigator.getUserMedia(screen_constraints, function (stream) {
+    function randomToken() {
+        return Math.random().toString(36).substr(2);
+    }
 
-        log("Received screen stream.");
+    // TODO: change url
+    var appInfo = {
+        appUrl: 'http://127.0.0.1:8080/flint/screen-sharing-sample/screen_viewer.html',
+        useIpc: true,
+        maxInactive: -1
+    };
 
-        localStream = stream;
+    var senderManager = new FlintSenderManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba', '', true);
+    var sharing = false;
+    var stopButton = $('<button>' + 'STOP' + '</button>');
+    stopButton.on('click', function () {
+        sharing = false;
+        senderManager.stop(appInfo);
 
-        // var video = document.getElementById('video');
-        // video.src = window.URL.createObjectURL(localStream);
-
-        stream.onended = function () {
-            log("screen stream ended.");
-        };
-
-        // document.querySelector('video').src = URL.createObjectURL(stream);
-    }, function (error) {
-        console.error(error);
+        if (localStream != null) {
+            localStream.stop();
+        }
     });
-});
+    $('<li></li>').append(stopButton).appendTo($('.deviceList'));
 
+    // Screen stream
+    var localStream = null;
 
-function shareScreen(device) {
+    var screenWidth = 1280; //window.screen.width;
+    var screenHeight = 720; //window.screen.height;
 
-    // TEST PrivXMLHttpRequest
+    console.log(window.screen.width);
+    console.log(window.screen.height);
 
-    // var xhr = new PrivXMLHttpRequest();
-    // var url = 'http://' + device.host + ':9431/ssdp/device-desc.xml';
-    // xhr.open("GET", url);
-    // xhr.onreadystatechange = function () {
-    //     if (xhr.readyState == 4) {
-    //         if (200 <= xhr.status && xhr.status < 300) {
-    //             console.log(xhr.responseText);
-    //         }
-    //     }
-    // };
-    // xhr.send();
+    getScreenId(function (error, sourceId, screen_constraints) {
 
-    // TST PrivWebSocket
+        console.log(error);
+        console.log(sourceId);
+        console.log(screen_constraints);
 
-    //  var ws = new PrivWebSocket("ws://192.168.8.173:8080/channels/demo");
-    //  ws.onopen = function () {
-    //      console.log('PrivWebSocket onopen !');
-    //  };
-    //  ws.onclose = function () {
-    //      console.log('PrivWebSocket onclose !');
-    //  };
-    //  ws.onmessage = function (event) {
-    //      console.log('PrivWebSocket onmessage : ' + event.data);
-    //  };
-    //
-    //  var timer, count = 0;
-    //  timer = setInterval(function () {
-    //      ws.send((new Date).toISOString());
-    //      if (count++ > 5) {
-    //          clearInterval(timer);
-    //      }
-    //  }, 2000);
-
-    var deviceManager = new FlintDeviceManager(device);
-
-    deviceManager.launch({
-        appId: '~a3ad1b9e-6883-11e4-b116-123b93f75cba',
-        appUrl: 'http://openflint.github.io/screen-sharing-sample/screen_viewer.html',
-        relaunchIfRunning: true
-    });
-
-    log('Application is launched !');
-
-    // WebRTC
-//    navigator.webkitGetUserMedia({
-//                audio: false,
-//                video: true
-//            video: {
-//                mandatory: {
-//                    chromeMediaSource: "screen",
-//
-//                    minFrameRate: 2,
-//                    minWidth: screenWidth,
-//                    minHeight: screenHeight,
-//
-//                    maxFrameRate: 24,
-//                    maxWidth: screenWidth,
-//                    maxHeight: screenHeight,
-//
-//                    googLeakyBucket: true,
-//                    googNoiseReduction: true,
-//                    googImprovedWifiBwe: true
-//                }
-//            }
-//            },
-//            gotStream, getUserMediaError
-//    );
-
-//    function getUserMediaError() {
-//        log("getUserMedia() failed.");
-//    }
-//
-//    function gotStream(stream) {
-//        log("Received screen stream.");
-//
-//        localStream = stream;
-//
-//        // var video = document.getElementById('video');
-//        // video.src = window.URL.createObjectURL(localStream);
-//
-//        stream.onended = function () {
-//            log("screen stream ended.");
-//        };
-//    }
-
-    deviceManager.once('additionaldatachanged', function (key, value) {
-
-        log('additionaldatachanged : ' + key + ' = ' + value);
-
-        // Channel name from app info additionalData
-        var channelName = deviceManager.getAdditionalData('channelName');
-
-        log('channelName : ' + channelName);
-
-        // Device IP from UPnP or MDNS
-        var deviceIp = device.host;
-
-        // The sender identifier，for example the token from DIAL request
-        var senderId = randomToken();
-
-        var peerConn = null;
-
-        var ws = new PrivWebSocket('ws://' + deviceIp + ':9439/channels/' + channelName + '/senders/' + senderId);
-
-        function createPeerConnection() {
-
-            log("Creating peer connection");
-
-            var config = {
-                "iceServers": []
-            };
-
-            try {
-                peerConn = new RTCPeerConnection(config);
-            } catch (e) {
-                log("Failed to create PeerConnection, exception: " + e.message);
-            }
-
-            // send any ice candidates to the other peer
-            peerConn.onicecandidate = function (evt) {
-                if (evt.candidate) {
-                    log('Sending ICE candidate...');
-                    console.log(evt.candidate);
-
-                    ws.send(JSON.stringify({
-                        type: "candidate",
-                        sdpMLineIndex: evt.candidate.sdpMLineIndex,
-                        sdpMid: evt.candidate.sdpMid,
-                        candidate: evt.candidate.candidate
-                    }));
-
-                } else {
-                    log("End of candidates.");
+        // Firefox
+        if (!!navigator.mozGetUserMedia) {
+            screen_constraints = {
+                "audio": false,
+                "video": {
+                    "mozMediaSource": "window",
+                    "mediaSource": "window",
+                    "maxWidth": 1920,
+                    "maxHeight": 1080,
+                    "minAspectRatio": 1.77
                 }
             };
-
-            console.log('Adding local stream...', localStream);
-            peerConn.addStream(localStream);
-
-            peerConn.addEventListener("addstream", onRemoteStreamAdded, false);
-            peerConn.addEventListener("removestream", onRemoteStreamRemoved, false);
-
-            // when remote adds a stream, hand it on to the local video element
-            function onRemoteStreamAdded(event) {
-                console.log("Added remote stream");
-            }
-
-            // when remote removes a stream, remove it from the local video element
-            function onRemoteStreamRemoved(event) {
-                console.log("Remove remote stream");
-            }
         }
 
-        var audioBandwidth = 50;
-        var videoBandwidth = 10000;
+        navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+        navigator.getUserMedia(screen_constraints, function (stream) {
 
-        function setBandwidth(sdp) {
-            sdp = sdp.replace(/a=mid:audio\r\n/g, 'a=mid:audio\r\nb=AS:' + audioBandwidth + '\r\n');
-            sdp = sdp.replace(/a=mid:video\r\n/g, 'a=mid:video\r\nb=AS:' + videoBandwidth + '\r\n');
-            return sdp;
-        }
+            log("Received screen stream.");
 
-        // send SDP via socket connection
-        function setLocalAndSendMessage(sessionDescription) {
-            sessionDescription.sdp = setBandwidth(sessionDescription.sdp);
-            peerConn.setLocalDescription(sessionDescription);
-            log("Sending SDP");
-            console.log(sessionDescription);
-            ws.send(JSON.stringify(sessionDescription));
-        }
+            localStream = stream;
 
-        function createOfferFailed() {
-            log("Create Answer failed");
-        }
-
-        ws.on('open', function () {
-
-            log('Websocket is open ! start screen sharing ...');
-
-            createPeerConnection();
-
-            var mediaConstraints = {
-                'mandatory': {
-                    'OfferToReceiveAudio': true,
-                    'OfferToReceiveVideo': true
-                }
-            };
-
-            peerConn.createOffer(setLocalAndSendMessage, createOfferFailed, mediaConstraints);
-        });
-
-        ws.on('message', function (data) {
-            var evt = JSON.parse(data);
-
-            if (evt.type === 'answer') {
-                log('Received answer...', evt);
-                log('Setting remote session description...');
-                peerConn.setRemoteDescription(new SessionDescription(evt));
-
-            } else if (evt.type === 'candidate') {
-                log('Received ICE candidate...');
-                var candidate = new RTCIceCandidate({
-                    sdpMLineIndex: evt.sdpMLineIndex,
-                    sdpMid: evt.sdpMid,
-                    candidate: evt.candidate
+            if (senderManager != null) {
+                senderManager.launch(appInfo, function (result, token) {
+                    if (result) {
+                        log('Application is launched ! OK!!! -> ' + token);
+                        senderManager.createPeer();
+                        senderManager.callReceiverPeer(localStream);
+                    }
+                    else {
+                        log('Application is launched ! failed!!!');
+                    }
                 });
-                console.log(candidate);
-                peerConn.addIceCandidate(candidate);
+            } else {
+                console.error("sender Manager is null!!!");
             }
+
+
+            // var video = document.getElementById('video');
+            // video.src = window.URL.createObjectURL(localStream);
+
+            stream.onended = function () {
+                log("screen stream ended.");
+            };
+
+            // document.querySelector('video').src = URL.createObjectURL(stream);
+        }, function (error) {
+            console.error(error);
         });
-    })
-}
-
-deviceScanner.on('devicefound', function (device) {
-
-    log('Found ' + device.friendlyName);
-
-    var button = $('<button>' + device.friendlyName + '</button>');
-    button.on('click', function () {
-        if (device.sharing) {
-            device.sharing = false;
-            shareScreen(device);
-        } else {
-            device.sharing = true;
-        }
     });
 
-    $('<li></li>').append(button).appendTo($('.deviceList'));
-});
+
+    function shareScreen(device) {
+        senderManager.setServiceUrl(device.getUrlBase());
+//        senderManager.launch(appInfo, function (result, token) {
+//            if (result) {
+//                log('Application is launched ! OK!!! -> ' + token);
+//                senderManager.createPeer();
+//                senderManager.callReceiverPeer(localStream);
+//            }
+//            else {
+//                log('Application is launched ! failed!!!');
+//            }
+//        });
+    }
+
+    var deviceScanner = new FlintDeviceScanner();
+    deviceScanner.on('devicefound', function (device) {
+
+        log('Found ' + device.friendlyName);
+
+        var button = $('<button>' + device.friendlyName + '</button>');
+        button.on('click', function () {
+            if (sharing == false) {
+                sharing = true;
+                shareScreen(device);
+            }
+        });
+
+        $('<li></li>').append(button).appendTo($('.deviceList'));
+    });
 
 </script>
 </body>
