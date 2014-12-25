@@ -61,7 +61,7 @@
 
     try {
         var manager = new FlintReceiverManager('~a3ad1b9e-6883-11e4-b116-123b93f75cba');
-        var peer = manager.createPeer();
+        var peer = manager.createMediaPeer();
         peer.on('call', function (call) {
             console.error("received call");
             call.answer(null);

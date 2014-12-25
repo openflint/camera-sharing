@@ -117,8 +117,7 @@
                 senderManager.launch(appInfo, function (result, token) {
                     if (result) {
                         log('Application is launched ! OK!!! -> ' + token);
-                        senderManager.createPeer();
-                        senderManager.callReceiverPeer(localStream);
+                        senderManager.callReceiverMediaPeer(localStream);
                     }
                     else {
                         log('Application is launched ! failed!!!');
@@ -148,8 +147,7 @@
 //        senderManager.launch(appInfo, function (result, token) {
 //            if (result) {
 //                log('Application is launched ! OK!!! -> ' + token);
-//                senderManager.createPeer();
-//                senderManager.callReceiverPeer(localStream);
+//                senderManager.callReceiverMediaPeer(localStream);
 //            }
 //            else {
 //                log('Application is launched ! failed!!!');
