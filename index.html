@@ -57,6 +57,17 @@
         return Math.random().toString(36).substr(2);
     }
 
+    // Screen stream
+    var localStream = null;
+
+    var screenWidth = 1280; //window.screen.width;
+    var screenHeight = 720; //window.screen.height;
+
+    var screen_constraints = {
+        "audio": false,
+        "video": true
+    };
+
     var appInfo = {
         appUrl: $.mobile.path.makeUrlAbsolute("screen_viewer.html", window.location.href),
         useIpc: true,
@@ -69,21 +80,11 @@
     stopButton.on('click', function () {
         sharing = false;
         senderManager.stop(appInfo);
-
         if (localStream != null) {
             localStream.stop();
         }
     });
     $('<li></li>').append(stopButton).appendTo($('.deviceList'));
-
-    // Screen stream
-    var localStream = null;
-
-    var screenWidth = 1280; //window.screen.width;
-    var screenHeight = 720; //window.screen.height;
-
-    console.log(window.screen.width);
-    console.log(window.screen.height);
 
     getScreenId(function (error, sourceId, screen_constraints) {
 
@@ -112,31 +113,6 @@
 
             localStream = stream;
 
-//            if (senderManager != null) {
-//                senderManager.launch(appInfo, function (result, token) {
-//                    if (result) {
-//                        log('Application is launched ! OK!!! -> ' + token);
-//                        senderManager.callReceiverMediaPeer(localStream);
-//                    }
-//                    else {
-//                        log('Application is launched ! failed!!!');
-//                    }
-//                });
-//            } else {
-//                console.error("sender Manager is null!!!");
-//            }
-            senderManager.setServiceUrl('http://192.168.8.134:9431');
-            senderManager.launch(appInfo, function (result, token) {
-                if (result) {
-                    log('Application is launched ! OK!!! -> ' + token);
-                    senderManager.callReceiverMediaPeer(localStream);
-                }
-                else {
-                    log('Application is launched ! failed!!!');
-                }
-            });
-
-
             // var video = document.getElementById('video');
             // video.src = window.URL.createObjectURL(localStream);
 
@@ -149,7 +125,6 @@
             console.error(error);
         });
     });
-
 
     function shareScreen(device) {
         senderManager.setServiceUrl(device.getUrlBase());
@@ -167,7 +142,7 @@
     var deviceScanner = new FlintDeviceScanner();
     deviceScanner.on('devicefound', function (device) {
 
-        log('Found ' + device.friendlyName);
+        log('MIRROR Found ' + device.friendlyName);
 
         var button = $('<button>' + device.friendlyName + '</button>');
         button.on('click', function () {
@@ -179,6 +154,8 @@
 
         $('<li></li>').append(button).appendTo($('.deviceList'));
     });
+
+    deviceScanner.start();
 
 </script>
 </body>
