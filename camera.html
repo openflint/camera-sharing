@@ -35,8 +35,8 @@
 
     <script src="js/sockit.js"></script>
     <script src="//openflint.github.io/flint-web-sdk/out/flint_sender_sdk.js"></script>
-    <!--<script src="//127.0.0.1:8080/flint/flint-web-sdk/out/flint_sender_sdk.js"></script>-->
-    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/jquery.mobile-1.3.0.min.js"></script>
     <script src="js/getScreenId.js"></script>
 </head>
 
@@ -69,7 +69,7 @@
     };
 
     var appInfo = {
-        appUrl: 'http://127.0.0.1:8080/flint/screen-sharing-sample/screen_viewer.html',
+        appUrl: $.mobile.path.makeUrlAbsolute("screen_viewer.html", window.location.href),
         useIpc: true,
         maxInactive: -1
     };
