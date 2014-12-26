@@ -112,19 +112,19 @@
 
             localStream = stream;
 
-            if (senderManager != null) {
-                senderManager.launch(appInfo, function (result, token) {
-                    if (result) {
-                        log('Application is launched ! OK!!! -> ' + token);
-                        senderManager.callReceiverMediaPeer(localStream);
-                    }
-                    else {
-                        log('Application is launched ! failed!!!');
-                    }
-                });
-            } else {
-                console.error("sender Manager is null!!!");
-            }
+//            if (senderManager != null) {
+//                senderManager.launch(appInfo, function (result, token) {
+//                    if (result) {
+//                        log('Application is launched ! OK!!! -> ' + token);
+//                        senderManager.callReceiverMediaPeer(localStream);
+//                    }
+//                    else {
+//                        log('Application is launched ! failed!!!');
+//                    }
+//                });
+//            } else {
+//                console.error("sender Manager is null!!!");
+//            }
 
 
             // var video = document.getElementById('video');
@@ -143,15 +143,15 @@
 
     function shareScreen(device) {
         senderManager.setServiceUrl(device.getUrlBase());
-//        senderManager.launch(appInfo, function (result, token) {
-//            if (result) {
-//                log('Application is launched ! OK!!! -> ' + token);
-//                senderManager.callReceiverMediaPeer(localStream);
-//            }
-//            else {
-//                log('Application is launched ! failed!!!');
-//            }
-//        });
+        senderManager.launch(appInfo, function (result, token) {
+            if (result) {
+                log('Application is launched ! OK!!! -> ' + token);
+                senderManager.callReceiverMediaPeer(localStream);
+            }
+            else {
+                log('Application is launched ! failed!!!');
+            }
+        });
     }
 
     var deviceScanner = new FlintDeviceScanner();
