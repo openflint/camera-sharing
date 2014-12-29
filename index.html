@@ -132,6 +132,15 @@
             if (result) {
                 log('Application is launched ! OK!!! -> ' + token);
                 senderManager.callReceiverMediaPeer(localStream);
+                senderManager.on('appstate', function (_, state, additionaldata) {
+                    if (state == 'stopped') {
+                        log('Receiver application is stopped!!!');
+                        log('This page will be reloaded in 2 seconds...');
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 2000);
+                    }
+                });
             }
             else {
                 log('Application is launched ! failed!!!');
