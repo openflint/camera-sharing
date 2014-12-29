@@ -86,65 +86,56 @@
     });
     $('<li></li>').append(stopButton).appendTo($('.deviceList'));
 
-    getScreenId(function (error, sourceId, screen_constraints) {
-
-        console.log(error);
-        console.log(sourceId);
-        console.log(screen_constraints);
-
-        // Firefox
-        if (!!navigator.mozGetUserMedia) {
-            screen_constraints = {
-                "audio": false,
-                "video": {
-                    "mozMediaSource": "window",
-                    "mediaSource": "window",
-                    "maxWidth": 1920,
-                    "maxHeight": 1080,
-                    "minAspectRatio": 1.77
-                }
-            };
-        }
-
-        navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
-        navigator.getUserMedia(screen_constraints, function (stream) {
-
-            log("Received screen stream.");
-
-            localStream = stream;
-
-            // var video = document.getElementById('video');
-            // video.src = window.URL.createObjectURL(localStream);
-
-            stream.onended = function () {
-                log("screen stream ended.");
-            };
-
-            // document.querySelector('video').src = URL.createObjectURL(stream);
-        }, function (error) {
-            console.error(error);
-        });
-    });
-
     function shareScreen(device) {
-        senderManager.setServiceUrl(device.getUrlBase());
-        senderManager.launch(appInfo, function (result, token) {
-            if (result) {
-                log('Application is launched ! OK!!! -> ' + token);
-                senderManager.callReceiverMediaPeer(localStream);
-                senderManager.on('appstate', function (_, state, additionaldata) {
-                    if (state == 'stopped') {
-                        log('Receiver application is stopped!!!');
-                        log('This page will be reloaded in 2 seconds...');
-                        setTimeout(function () {
-                            window.location.reload();
-                        }, 2000);
+        getScreenId(function (error, sourceId, screen_constraints) {
+
+            console.log(error);
+            console.log(sourceId);
+            console.log(screen_constraints);
+
+            // Firefox
+            if (!!navigator.mozGetUserMedia) {
+                screen_constraints = {
+                    "audio": false,
+                    "video": {
+                        "mozMediaSource": "window",
+                        "mediaSource": "window",
+                        "maxWidth": 1920,
+                        "maxHeight": 1080,
+                        "minAspectRatio": 1.77
+                    }
+                };
+            }
+
+            navigator.getUserMedia = navigator.mozGetUserMedia || navigator.webkitGetUserMedia;
+            navigator.getUserMedia(screen_constraints, function (stream) {
+
+                log("Received screen stream.");
+
+                localStream = stream;
+
+                senderManager.setServiceUrl(device.getUrlBase());
+                senderManager.launch(appInfo, function (result, token) {
+                    if (result) {
+                        log('Application is launched ! OK!!! -> ' + token);
+                        senderManager.callReceiverMediaPeer(localStream);
+                        senderManager.on('appstate', function (_, state, additionaldata) {
+                            if (state == 'stopped') {
+                                log('Receiver application is stopped!!!');
+                                log('This page will be reloaded in 2 seconds...');
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 2000);
+                            }
+                        });
+                    }
+                    else {
+                        log('Application is launched ! failed!!!');
                     }
                 });
-            }
-            else {
-                log('Application is launched ! failed!!!');
-            }
+            }, function (error) {
+                console.error(error);
+            });
         });
     }
 
