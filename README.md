@@ -1,5 +1,5 @@
 ## Overview
-* Using WebRCT to do media mirroring, now only available on Mac OS
+* Using WebRCT to do media mirroring, now only available on Mac and Ubuntu
 * Support Firefox Browser and Chrome Browser to mirror screen or webcam to Matchstick dongle
 
 ![Screen Sharing Arch](http://openflint.github.io/screen-sharing-sample/arch.png)
