@@ -1,461 +1,513 @@
 /*! screen-sharing-sample build:0.1.0, development. Copyright(C) 2013-2014 www.OpenFlint.org */(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var EventEmitter, FlintDevice,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+var dataBrowser = [
+    {
+        string: navigator.userAgent,
+        subString: "Chrome",
+        identity: "Chrome"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "OmniWeb",
+        versionSearch: "OmniWeb/",
+        identity: "OmniWeb"
+    },
+    {
+        string: navigator.vendor,
+        subString: "Apple",
+        identity: "Safari",
+        versionSearch: "Version"
+    },
+    {
+        prop: window.opera,
+        identity: "Opera",
+        versionSearch: "Version"
+    },
+    {
+        string: navigator.vendor,
+        subString: "iCab",
+        identity: "iCab"
+    },
+    {
+        string: navigator.vendor,
+        subString: "KDE",
+        identity: "Konqueror"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "Firefox",
+        identity: "Firefox"
+    },
+    {
+        string: navigator.vendor,
+        subString: "Camino",
+        identity: "Camino"
+    },
+    {		// for newer Netscapes (6+)
+        string: navigator.userAgent,
+        subString: "Netscape",
+        identity: "Netscape"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "MSIE",
+        identity: "Explorer",
+        versionSearch: "MSIE"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "Gecko",
+        identity: "Mozilla",
+        versionSearch: "rv"
+    },
+    { 		// for older Netscapes (4-)
+        string: navigator.userAgent,
+        subString: "Mozilla",
+        identity: "Netscape",
+        versionSearch: "Mozilla"
+    }
+];
 
-EventEmitter = require('eventemitter3');
+var dataOS = [
+    {
+        string: navigator.platform,
+        subString: "Win",
+        identity: "Windows"
+    },
+    {
+        string: navigator.platform,
+        subString: "Mac",
+        identity: "Mac"
+    },
+    {
+        string: navigator.userAgent,
+        subString: "iPhone",
+        identity: "iPhone/iPod"
+    },
+    {
+        string: navigator.platform,
+        subString: "Linux",
+        identity: "Linux"
+    }
+];
 
-FlintDevice = (function(_super) {
-  __extends(FlintDevice, _super);
+BrowserDetect = function () {
+};
 
-  function FlintDevice(options) {}
+BrowserDetect.prototype.init = function () {
+    this.browser = this.searchString(dataBrowser) || "An unknown browser";
+    this.version = this.searchVersion(navigator.userAgent)
+        || this.searchVersion(navigator.appVersion)
+        || "an unknown version";
+    this.OS = this.searchString(dataOS) || "an unknown OS";
+};
 
-  return FlintDevice;
-
-})(EventEmitter);
-
-module.exports = FlintDevice;
-
-
-
-},{"eventemitter3":18}],2:[function(require,module,exports){
-var EventEmitter, FlintDeviceScanner, NativeMethods, SimpleServiceDiscovery,
-  __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-EventEmitter = require('eventemitter3');
-
-SimpleServiceDiscovery = require('./SimpleServiceDiscovery');
-
-NativeMethods = require('./NativeMethods');
-
-FlintDeviceScanner = (function(_super) {
-  __extends(FlintDeviceScanner, _super);
-
-  function FlintDeviceScanner(options) {
-    this.ssdp = new SimpleServiceDiscovery();
-    this.ssdp.registerTarget('urn:dial-multiscreen-org:service:dial:1');
-    this.ssdp.on('notify', (function(_this) {
-      return function(rinfo) {
-        console.log('Got a notification. ' + rinfo.host);
-        return _this.foundOne(rinfo.host);
-      };
-    })(this));
-    this.ssdp.on('response', (function(_this) {
-      return function(rinfo) {
-        console.log('Got a response to an m-search. ' + rinfo.host);
-        return _this.foundOne(rinfo.host);
-      };
-    })(this));
-    this.ssdp.search(30 * 1000);
-  }
-
-  FlintDeviceScanner.prototype.foundOne = function(host) {
-    var url;
-    url = 'http://' + host + ':9431/ssdp/device-desc.xml';
-    return NativeMethods.httpGet(url, (function(_this) {
-      return function(success, outheaders, data) {
-        if (success) {
-          return console.log(data);
-        } else {
-          return console.error('httpGet "' + url + '" failed !');
+BrowserDetect.prototype.searchString = function (data) {
+    for (var i = 0; i < data.length; i++) {
+        var dataString = data[i].string;
+        var dataProp = data[i].prop;
+        this.versionSearchString = data[i].versionSearch || data[i].identity;
+        if (dataString) {
+            if (dataString.indexOf(data[i].subString) != -1)
+                return data[i].identity;
         }
-      };
-    })(this));
+        else if (dataProp)
+            return data[i].identity;
+    }
+};
+
+BrowserDetect.prototype.searchVersion = function (dataString) {
+    var sIndex = dataString.indexOf(this.versionSearchString);
+    if (sIndex == -1) return;
+    var reg = /(?:;|\s|$)/gi;
+    reg.lastIndex = sIndex = sIndex + this.versionSearchString.length + 1;
+    var eIndex = reg.exec(dataString).index;
+    return dataString.substring(sIndex, eIndex);
+    //return parseFloat(dataString.substring(index+this.versionSearchString.length+1));
+};
+
+module.exports = BrowserDetect;
+},{}],2:[function(require,module,exports){
+var FlintConstants;
+
+FlintConstants = (function() {
+  function FlintConstants() {}
+
+  FlintConstants.DEFAULT_CHANNEL_NAME = 'channelBaseUrl';
+
+  FlintConstants.DEFAULT_NAMESPACE = 'urn:flint:org.openflint.default';
+
+  FlintConstants.MEDIA_NAMESPACE = 'urn:flint:org.openflint.fling.media';
+
+  return FlintConstants;
+
+})();
+
+module.exports = FlintConstants;
+
+
+
+},{}],3:[function(require,module,exports){
+var EventEmitter, MessageBus,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+EventEmitter = require('eventemitter3');
+
+MessageBus = (function(_super) {
+  __extends(MessageBus, _super);
+
+  function MessageBus(channel, namespace) {
+    this.channel = channel;
+    this.namespace = namespace;
+    this._init();
+  }
+
+  MessageBus.prototype._init = function() {
+    throw 'Not Implement';
   };
 
-  return FlintDeviceScanner;
+  MessageBus.prototype.send = function() {
+    throw 'Not Implement';
+  };
+
+  return MessageBus;
 
 })(EventEmitter);
 
-module.exports = FlintDeviceScanner;
+module.exports = MessageBus;
 
 
 
-},{"./NativeMethods":5,"./SimpleServiceDiscovery":8,"eventemitter3":18}],3:[function(require,module,exports){
-var FlintPeer, Util;
+},{"eventemitter3":26}],4:[function(require,module,exports){
+var EventEmitter, MessageChannel,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-Util = require('./Util');
+EventEmitter = require('eventemitter3');
 
-FlintPeer = (function() {
-  function FlintPeer(options) {
-    if (options.appId) {
-      console.log("Receiver FlintPeer");
-    } else {
-      console.log("Sender FlintPeer");
-    }
+MessageChannel = (function(_super) {
+  var CLOSED, CLOSING, CONNECTING, OPEN;
+
+  __extends(MessageChannel, _super);
+
+  CONNECTING = 0;
+
+  OPEN = 1;
+
+  CLOSING = 2;
+
+  CLOSED = 3;
+
+  function MessageChannel(name, url) {
+    this.name = name;
+    this.url = url;
+    this.wsChannel = null;
+    this.opened = false;
   }
 
-  return FlintPeer;
-
-})();
-
-module.exports = FlintPeer;
-
-
-
-},{"./Util":9}],4:[function(require,module,exports){
-var FlintPeer, FlintReceiverManager, Util;
-
-Util = require('./Util');
-
-FlintPeer = require('./FlintPeer');
-
-FlintReceiverManager = (function() {
-  function FlintReceiverManager(options) {}
-
-  FlintReceiverManager.prototype.createFlintPeer = function() {
-    return new FlintPeer();
+  MessageChannel.prototype.isOpened = function() {
+    return this.opened;
   };
 
-  return FlintReceiverManager;
+  MessageChannel.prototype.getName = function() {
+    return this.name;
+  };
 
-})();
+  MessageChannel.prototype.open = function(url) {
+    if (url) {
+      this.url = url;
+    }
+    this.wsChannel = new WebSocket(this.url);
+    this.wsChannel.onopen = (function(_this) {
+      return function(event) {
+        return _this.emit('open', event);
+      };
+    })(this);
+    this.wsChannel.onclose = (function(_this) {
+      return function(event) {
+        return _this.emit('close', event);
+      };
+    })(this);
+    this.wsChannel.onerror = (function(_this) {
+      return function(event) {
+        return _this.emit('error', event);
+      };
+    })(this);
+    this._initOnMessage();
+    return this.opened = true;
+  };
 
-module.exports = FlintReceiverManager;
+  MessageChannel.prototype._initOnMessage = function() {
+    return this.wsChannel.onmessage = (function(_this) {
+      return function(event) {
+        return _this.emit('message', event.data);
+      };
+    })(this);
+  };
 
+  MessageChannel.prototype.close = function() {
+    var _ref;
+    this.opened = false;
+    return (_ref = this.wsChannel) != null ? _ref.close() : void 0;
+  };
 
-
-},{"./FlintPeer":3,"./Util":9}],5:[function(require,module,exports){
-var NativeMethods;
-
-NativeMethods = (function() {
-  function NativeMethods() {}
-
-  NativeMethods.checkPluginAvailable = function() {
-    NativeMethods.loadPlugin();
-    if (NativeMethods.plugin) {
-      return true;
+  MessageChannel.prototype.send = function(data) {
+    var _ref, _ref1, _ref2;
+    if (!this.opened) {
+      console.warn('MessageChannel is not opened, cannot sent: ', data);
+      return;
+    }
+    if (!data) {
+      return;
+    }
+    if (((_ref = this.wsChannel) != null ? _ref.readyState : void 0) === OPEN) {
+      return (_ref1 = this.wsChannel) != null ? _ref1.send(data) : void 0;
+    } else if (((_ref2 = this.wsChannel) != null ? _ref2.readyState : void 0) === CONNECTING) {
+      return setTimeout(((function(_this) {
+        return function() {
+          return _this.send(data);
+        };
+      })(this)), 50);
+    } else {
+      return console.error('MessageChannel send failed, channel readyState is ', this.wsChannel.readyState);
     }
   };
 
-  NativeMethods.loadPlugin = function() {
-    return NativeMethods.plugin = loadSockitPlugin();
-  };
+  return MessageChannel;
 
-  NativeMethods.isAvailable = function() {
-    return typeof NativeMethods.plugin !== 'undefined';
-  };
+})(EventEmitter);
 
-  NativeMethods.createWebSocket = function(url) {
-    if (NativeMethods.checkPluginAvailable()) {
-      NativeMethods.plugin.createWebSocket(url);
+module.exports = MessageChannel;
+
+
+
+},{"eventemitter3":26}],5:[function(require,module,exports){
+var BrowserDetect, Platform;
+
+BrowserDetect = require('./BrowserDetect');
+
+Platform = (function() {
+  function Platform() {}
+
+  Platform.detector = null;
+
+  Platform.getPlatform = function() {
+    var platform;
+    if (!Platform.detector) {
+      Platform.detector = new BrowserDetect();
+      Platform.detector.init();
+      if (Platform.detector.browser.toLowerCase() === 'firefox') {
+        if (window.MozActivity !== void 0) {
+          Platform.detector.browser = 'ffos';
+        }
+      }
     }
+    platform = {
+      browser: Platform.detector.browser.toLowerCase(),
+      version: Platform.detector.version.toLowerCase(),
+      os: Platform.detector.OS.toLowerCase()
+    };
+    return platform;
+  };
+
+  return Platform;
+
+})();
+
+module.exports = Platform;
+
+
+
+},{"./BrowserDetect":1}],6:[function(require,module,exports){
+var EventEmitter, MDNSManager,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+EventEmitter = require('eventemitter3');
+
+MDNSManager = (function(_super) {
+  __extends(MDNSManager, _super);
+
+  function MDNSManager() {
+    null;
+  }
+
+  MDNSManager.prototype.start = function() {
     return null;
   };
 
-  NativeMethods.httpGet = function(url, callback) {
-    if (NativeMethods.checkPluginAvailable()) {
-      return NativeMethods.plugin.httpGet(url, callback);
-    }
+  MDNSManager.prototype.stop = function() {
+    return null;
   };
 
-  return NativeMethods;
+  return MDNSManager;
 
-})();
+})(EventEmitter);
 
-module.exports = NativeMethods;
-
-
-
-},{}],6:[function(require,module,exports){
-var NativeMethods, NativeWebSocket;
-
-NativeMethods = require('./NativeMethods');
-
-NativeWebSocket = (function() {
-  function NativeWebSocket(url) {
-    this.impl = NativeMethods.createWebSocket(url, {
-      onopen: (function(_this) {
-        return function() {};
-      })(this),
-      onclose: (function(_this) {
-        return function() {};
-      })(this),
-      onmessage: (function(_this) {
-        return function(data) {};
-      })(this),
-      onerror: (function(_this) {
-        return function() {};
-      })(this),
-      onstatuschanged: (function(_this) {
-        return function(status) {};
-      })(this)
-    });
-  }
-
-  return NativeWebSocket;
-
-})();
-
-module.exports = NativeWebSocket;
+module.exports = MDNSManager;
 
 
 
-},{"./NativeMethods":5}],7:[function(require,module,exports){
-if (!String.prototype.startsWith) {
-  Object.defineProperty(String.prototype, 'startsWith', {
-    enumerable: false,
-    configurable: false,
-    writable: false,
-    value: function(searchString, position) {
-      position = position || 0;
-      return this.lastIndexOf(searchString, position) === position;
-    }
-  });
-}
-
-if (!Array.prototype.find) {
-  Array.prototype.find = function(predicate) {
-    var i, length, list, thisArg, value, _i, _ref;
-    if (this === null) {
-      throw new TypeError('Array.prototype.find called on null or undefined');
-    }
-    if (typeof predicate !== 'function') {
-      throw new TypeError('predicate must be a function');
-    }
-    list = Object(this);
-    length = list.length >>> 0;
-    thisArg = arguments[1];
-    for (i = _i = 0, _ref = length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-      value = list[i];
-      if (predicate.call(thisArg, value, i, list)) {
-        return value;
-      }
-    }
-    return void 0;
-  };
-}
-
-if (!Array.prototype.findIndex) {
-  Array.prototype.findIndex = function(predicate) {
-    var i, length, list, thisArg, value, _i, _ref;
-    if (this === null) {
-      throw new TypeError('Array.prototype.find called on null or undefined');
-    }
-    if (typeof predicate !== 'function') {
-      throw new TypeError('predicate must be a function');
-    }
-    list = Object(this);
-    length = list.length >>> 0;
-    thisArg = arguments[1];
-    value;
-    for (i = _i = 0, _ref = length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
-      value = list[i];
-      if (predicate.call(thisArg, value, i, list)) {
-        return i;
-      }
-    }
-    return -1;
-  };
-}
-
-
-
-},{}],8:[function(require,module,exports){
-var EventEmitter, SSDP_ADDRESS, SSDP_DISCOVER_MX, SSDP_DISCOVER_PACKET, SSDP_HEADER, SSDP_PORT, SSDP_RESPONSE_HEADER, SimpleServiceDiscovery,
+},{"eventemitter3":26}],7:[function(require,module,exports){
+var FlintDevice, SSDPDevice,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-require('./Polyfill');
+FlintDevice = require('../../sender/FlintDevice');
+
+SSDPDevice = (function(_super) {
+  __extends(SSDPDevice, _super);
+
+  function SSDPDevice(deviceDesc) {
+    SSDPDevice.__super__.constructor.apply(this, arguments);
+    this.urlBase = deviceDesc.urlBase;
+    if (this.urlBase.slice(-5) !== ':9431') {
+      this.urlBase += ':9431';
+    }
+    this.friendlyName = deviceDesc.friendlyName;
+    this.uniqueId = deviceDesc.udn;
+  }
+
+  SSDPDevice.prototype.getDeviceType = function() {
+    return 'ssdp';
+  };
+
+  return SSDPDevice;
+
+})(FlintDevice);
+
+module.exports = SSDPDevice;
+
+
+
+},{"../../sender/FlintDevice":20}],8:[function(require,module,exports){
+var EventEmitter, PlatformLoader, SSDPDevice, SSDPManager,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 EventEmitter = require('eventemitter3');
 
-SSDP_PORT = 1900;
+PlatformLoader = require('../../platform/PlatformLoader');
 
-SSDP_ADDRESS = "239.255.255.250";
+SSDPDevice = require('./SSDPDevice');
 
-SSDP_DISCOVER_MX = 10;
+SSDPManager = (function(_super) {
+  __extends(SSDPManager, _super);
 
-SSDP_DISCOVER_PACKET = "M-SEARCH * HTTP/1.1\r\n" + "HOST: " + SSDP_ADDRESS + ":" + SSDP_PORT + "\r\n" + "MAN: \"ssdp:discover\"\r\n" + "MX: " + SSDP_DISCOVER_MX + "\r\n" + "ST: %SEARCH_TARGET%\r\n\r\n";
-
-SSDP_RESPONSE_HEADER = /HTTP\/\d{1}\.\d{1} \d+ .*/;
-
-SSDP_HEADER = /^([^:]+):\s*(.*)$/;
-
-SimpleServiceDiscovery = (function(_super) {
-  __extends(SimpleServiceDiscovery, _super);
-
-  function SimpleServiceDiscovery(options) {
-    this._targets = [];
-  }
-
-  SimpleServiceDiscovery.prototype.search = function(aInterval) {
-    aInterval = aInterval || 0;
-    if (aInterval > 0) {
-      this._searchRepeat = setInterval(((function(_this) {
-        return function() {
-          return _this._search();
-        };
-      })(this)), aInterval);
-    }
-    return this._search();
-  };
-
-  SimpleServiceDiscovery.prototype.stopSearch = function() {
-    if (this._searchRepeat) {
-      return clearInterval(this._searchRepeat);
-    }
-  };
-
-  SimpleServiceDiscovery.prototype.registerTarget = function(target) {
-    if (this._targets.indexOf(target) < 0) {
-      return this._targets.push(target);
-    }
-  };
-
-  SimpleServiceDiscovery.prototype._usingLAN = function() {
-    return true;
-  };
-
-  SimpleServiceDiscovery.prototype._search = function() {
-    var data, sockit;
-    if (!this._usingLAN()) {
-      return;
-    }
-    if (!this._udpClient) {
-      sockit = loadSockitPlugin();
-      console.log(sockit);
-      this._udpServer = sockit.createUdpServer(SSDP_PORT, {
-        multicast: true,
-        multicastTTL: 16,
-        multicastGroup: SSDP_ADDRESS,
-        reuseAddress: true
-      });
-      this._udpServer.addEventListener("data", (function(_this) {
-        return function(event) {
-          return _this._onmessage({
-            host: event.getHost(),
-            data: event.read()
-          });
-        };
-      })(this));
-      this._udpServer.listen();
-      this._udpClient = sockit.createUdpClient(SSDP_ADDRESS, SSDP_PORT, {
-        multicast: true,
-        multicastTTL: 16
-      });
-    }
-    data = SSDP_DISCOVER_PACKET;
-    return this._targets.forEach((function(_this) {
-      return function(target) {
-        var msgData;
-        msgData = data.replace("%SEARCH_TARGET%", target);
-        console.log(msgData);
-        return _this._udpClient.send(msgData);
-      };
-    })(this));
-  };
-
-  SimpleServiceDiscovery.prototype.shutdown = function() {
-    if (this._udpServer) {
-      this._udpServer.close();
-      delete this._udpServer;
-    }
-    if (this._udpClient) {
-      this._udpClient.close();
-      return delete this._udpClient;
-    }
-  };
-
-  SimpleServiceDiscovery.prototype._onmessage = function(event) {
-    var firstLine, headers, lines, method, msg, rinfo;
-    msg = event.data;
-    lines = msg.toString().split("\r\n");
-    firstLine = lines.shift();
-    method = SSDP_RESPONSE_HEADER.test(firstLine) ? 'RESPONSE' : firstLine.split(' ')[0].toUpperCase();
-    headers = {};
-    lines.forEach((function(_this) {
-      return function(line) {
-        var pairs;
-        if (line.length) {
-          pairs = line.match(/^([^:]+):\s*(.*)$/);
-          if (pairs) {
-            return headers[pairs[1].toLowerCase()] = pairs[2];
+  function SSDPManager() {
+    var options;
+    this.devices = {};
+    options = {
+      st: 'urn:dial-multiscreen-org:service:dial:1'
+    };
+    this.ssdp = PlatformLoader.getPlatform().createSSDPResponder(options);
+    this.ssdp.on('serviceFound', (function(_this) {
+      return function(url) {
+        if (!_this.devices[url]) {
+          _this.devices[url] = url;
+          return _this._fetchDeviceDesc(url);
+        } else {
+          if (_this.devices[url].triggerTimer) {
+            return _this.devices[url].triggerTimer();
           }
         }
       };
     })(this));
-    rinfo = {
-      host: event.host
-    };
-    if (method === 'M-SEARCH') {
-      return this._msearch(headers, rinfo);
-    } else if (method === 'RESPONSE') {
-      return this._response(headers, rinfo);
-    } else if (method === 'NOTIFY') {
-      return this._notify(headers, rinfo);
+    this.ssdp.on('serviceLost', (function(_this) {
+      return function(url) {
+        var device;
+        if (_this.devices[url]) {
+          device = _this.devices[url];
+          _this.emit('removedevice', device);
+          device.clear();
+          return delete _this.devices[url];
+        }
+      };
+    })(this));
+  }
+
+  SSDPManager.prototype.start = function() {
+    return this.ssdp.start();
+  };
+
+  SSDPManager.prototype.stop = function() {
+    return this.ssdp.stop();
+  };
+
+  SSDPManager.prototype._fetchDeviceDesc = function(url) {
+    var xhr;
+    xhr = PlatformLoader.getPlatform().createXMLHttpRequest();
+    if (!xhr) {
+      throw '_fetchDeviceDesc: failed';
+    }
+    xhr.open('GET', url);
+    xhr.onreadystatechange = (function(_this) {
+      return function() {
+        if (xhr.readyState === 4) {
+          return _this._parseDeviceDesc(xhr.responseText, url);
+        }
+      };
+    })(this);
+    return xhr.send('');
+  };
+
+  SSDPManager.prototype._parseDeviceDesc = function(data, url) {
+    var devices, e, parser, urlBase, urls, xml;
+    try {
+      xml = null;
+      if (window.DOMParser) {
+        parser = new DOMParser();
+        xml = parser.parseFromString(data, "text/xml");
+      } else {
+        xml = new ActiveXObject("Microsoft.XMLDOM");
+        xml.async = "false";
+        xml.loadXML(data);
+      }
+      urlBase = null;
+      urls = xml.querySelectorAll('URLBase');
+      if (urls && urls.length > 0) {
+        urlBase = urls[0].innerHTML;
+      }
+      devices = xml.querySelectorAll('device');
+      if (devices.length > 0) {
+        return this._parseSingleDeviceDesc(devices[0], urlBase, url);
+      }
+    } catch (_error) {
+      e = _error;
+      return console.error(e);
     }
   };
 
-  SimpleServiceDiscovery.prototype._response = function(headers, rinfo) {
-    if (!headers.st && headers.nt) {
-      headers.st = headers.nt;
-    }
-    if (headers.location && this._targets.indexOf(headers.st) >= 0) {
-      return this.emit('response', rinfo);
-    }
+  SSDPManager.prototype._parseSingleDeviceDesc = function(deviceNode, urlBase, url) {
+    var device, deviceType, friendlyName, manufacturer, modelName, udn;
+    deviceType = deviceNode.querySelector('deviceType').innerHTML;
+    udn = deviceNode.querySelector("UDN").innerHTML;
+    friendlyName = deviceNode.querySelector('friendlyName').innerHTML;
+    manufacturer = deviceNode.querySelector('manufacturer').innerHTML;
+    modelName = deviceNode.querySelector('modelName').innerHTML;
+    device = new SSDPDevice({
+      uniqueId: udn,
+      urlBase: urlBase,
+      deviceType: deviceType,
+      udn: udn,
+      friendlyName: friendlyName,
+      manufacturer: manufacturer,
+      modelName: modelName
+    });
+    device.triggerTimer();
+    this.devices[url] = device;
+    return this.emit('adddevice', device);
   };
 
-  SimpleServiceDiscovery.prototype._notify = function(headers, rinfo) {
-    if (headers.nts === 'ssdp:alive') {
-      return this.emit('notify', rinfo);
-    } else if (headers.nts === 'ssdp:byebye') {
-      return this.emit('advertise-bye', headers);
-    }
-  };
-
-  SimpleServiceDiscovery.prototype._msearch = function(headers, rinfo) {};
-
-  return SimpleServiceDiscovery;
+  return SSDPManager;
 
 })(EventEmitter);
 
-module.exports = SimpleServiceDiscovery;
+module.exports = SSDPManager;
 
 
 
-},{"./Polyfill":7,"eventemitter3":18}],9:[function(require,module,exports){
-module.exports = {
-  randomToken: function() {
-    return Math.random().toString(36).substr(2);
-  }
-};
-
-
-
-},{}],10:[function(require,module,exports){
-window.NativeWebSocket = require('./NativeWebSocket');
-
-window.FlintDevice = require('./FlintDevice');
-
-window.FlintDeviceScanner = require('./FlintDeviceScanner');
-
-window.FlintReceiverManager = require('./FlintReceiverManager');
-
-window.Socket = require('./peerjs/socket');
-
-window.MediaConnection = require('./peerjs/mediaconnection');
-
-window.DataConnection = require('./peerjs/dataconnection');
-
-window.Peer = require('./peerjs/peer');
-
-window.RTCPeerConnection = (require('./peerjs/adapter')).RTCPeerConnection;
-
-window.RTCSessionDescription = (require('./peerjs/adapter')).RTCSessionDescription;
-
-window.RTCIceCandidate = (require('./peerjs/adapter')).RTCIceCandidate;
-
-window.Negotiator = require('./peerjs/negotiator');
-
-window.util = require('./peerjs/util');
-
-window.BinaryPack = require('js-binarypack');
-
-
-
-},{"./FlintDevice":1,"./FlintDeviceScanner":2,"./FlintReceiverManager":4,"./NativeWebSocket":6,"./peerjs/adapter":11,"./peerjs/dataconnection":12,"./peerjs/mediaconnection":13,"./peerjs/negotiator":14,"./peerjs/peer":15,"./peerjs/socket":16,"./peerjs/util":17,"js-binarypack":19}],11:[function(require,module,exports){
+},{"../../platform/PlatformLoader":17,"./SSDPDevice":7,"eventemitter3":26}],9:[function(require,module,exports){
 module.exports.RTCSessionDescription = window.RTCSessionDescription ||
 	window.mozRTCSessionDescription;
 module.exports.RTCPeerConnection = window.RTCPeerConnection ||
@@ -463,7 +515,7 @@ module.exports.RTCPeerConnection = window.RTCPeerConnection ||
 module.exports.RTCIceCandidate = window.RTCIceCandidate ||
 	window.mozRTCIceCandidate;
 
-},{}],12:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var util = require('./util');
 var EventEmitter = require('eventemitter3');
 var Negotiator = require('./negotiator');
@@ -732,7 +784,7 @@ DataConnection.prototype.handleMessage = function(message) {
 
 module.exports = DataConnection;
 
-},{"./negotiator":14,"./util":17,"eventemitter3":18,"reliable":21}],13:[function(require,module,exports){
+},{"./negotiator":12,"./util":15,"eventemitter3":26,"reliable":29}],11:[function(require,module,exports){
 var util = require('./util');
 var EventEmitter = require('eventemitter3');
 var Negotiator = require('./negotiator');
@@ -829,7 +881,7 @@ MediaConnection.prototype.close = function() {
 
 module.exports = MediaConnection;
 
-},{"./negotiator":14,"./util":17,"eventemitter3":18}],14:[function(require,module,exports){
+},{"./negotiator":12,"./util":15,"eventemitter3":26}],12:[function(require,module,exports){
 var util = require('./util');
 var RTCPeerConnection = require('./adapter').RTCPeerConnection;
 var RTCSessionDescription = require('./adapter').RTCSessionDescription;
@@ -1140,7 +1192,7 @@ Negotiator.handleCandidate = function(connection, ice) {
 
 module.exports = Negotiator;
 
-},{"./adapter":11,"./util":17}],15:[function(require,module,exports){
+},{"./adapter":9,"./util":15}],13:[function(require,module,exports){
 var util = require('./util');
 var EventEmitter = require('eventemitter3');
 var Socket = require('./socket');
@@ -1639,7 +1691,7 @@ Peer.prototype.listAllPeers = function(cb) {
 
 module.exports = Peer;
 
-},{"./dataconnection":12,"./mediaconnection":13,"./socket":16,"./util":17,"eventemitter3":18}],16:[function(require,module,exports){
+},{"./dataconnection":10,"./mediaconnection":11,"./socket":14,"./util":15,"eventemitter3":26}],14:[function(require,module,exports){
 var util = require('./util');
 var EventEmitter = require('eventemitter3');
 
@@ -1648,214 +1700,214 @@ var EventEmitter = require('eventemitter3');
  * possible connection for peers.
  */
 function Socket(secure, host, port, path, key) {
-  if (!(this instanceof Socket)) return new Socket(secure, host, port, path, key);
+    if (!(this instanceof Socket)) return new Socket(secure, host, port, path, key);
 
-  EventEmitter.call(this);
+    EventEmitter.call(this);
 
-  // Disconnected manually.
-  this.disconnected = false;
-  this._queue = [];
+    // Disconnected manually.
+    this.disconnected = false;
+    this._queue = [];
 
-  var httpProtocol = secure ? 'https://' : 'http://';
-  var wsProtocol = secure ? 'wss://' : 'ws://';
-  this._httpUrl = httpProtocol + host + ':' + port + path + key;
-  this._wsUrl = wsProtocol + host + ':' + port + path + 'peerjs?key=' + key;
+    var httpProtocol = secure ? 'https://' : 'http://';
+    var wsProtocol = secure ? 'wss://' : 'ws://';
+    this._httpUrl = httpProtocol + host + ':' + port + path + key;
+    this._wsUrl = wsProtocol + host + ':' + port + path + 'peerjs?key=' + key;
 }
 
 util.inherits(Socket, EventEmitter);
 
 
 /** Check in with ID or get one from server. */
-Socket.prototype.start = function(id, token) {
-  this.id = id;
+Socket.prototype.start = function (id, token) {
+    this.id = id;
 
-  this._httpUrl += '/' + id + '/' + token;
-  this._wsUrl += '&id=' + id + '&token=' + token;
+    this._httpUrl += '/' + id + '/' + token;
+    this._wsUrl += '&id=' + id + '&token=' + token;
 
-  this._startXhrStream();
-  this._startWebSocket();
+    this._startXhrStream();
+    this._startWebSocket();
 }
 
 
 /** Start up websocket communications. */
-Socket.prototype._startWebSocket = function(id) {
-  var self = this;
+Socket.prototype._startWebSocket = function (id) {
+    var self = this;
 
-  if (this._socket) {
-    return;
-  }
-
-  this._socket = new WebSocket(this._wsUrl);
-
-  this._socket.onmessage = function(event) {
-    try {
-      var data = JSON.parse(event.data);
-    } catch(e) {
-      util.log('Invalid server message', event.data);
-      return;
+    if (this._socket) {
+        return;
     }
-    self.emit('message', data);
-  };
 
-  this._socket.onclose = function(event) {
-    util.log('Socket closed.');
-    self.disconnected = true;
-    self.emit('disconnected');
-  };
+    this._socket = new WebSocket(this._wsUrl);
 
-  // Take care of the queue of connections if necessary and make sure Peer knows
-  // socket is open.
-  this._socket.onopen = function() {
-    if (self._timeout) {
-      clearTimeout(self._timeout);
-      setTimeout(function(){
-        self._http.abort();
-        self._http = null;
-      }, 5000);
-    }
-    self._sendQueuedMessages();
-    util.log('Socket open');
-  };
+    this._socket.onmessage = function (event) {
+        try {
+            var data = JSON.parse(event.data);
+        } catch (e) {
+            util.log('Invalid server message', event.data);
+            return;
+        }
+        self.emit('message', data);
+    };
+
+    this._socket.onclose = function (event) {
+        util.log('Socket closed.');
+        self.disconnected = true;
+        self.emit('disconnected');
+    };
+
+    // Take care of the queue of connections if necessary and make sure Peer knows
+    // socket is open.
+    this._socket.onopen = function () {
+        if (self._timeout) {
+            clearTimeout(self._timeout);
+            setTimeout(function () {
+                self._http.abort();
+                self._http = null;
+            }, 5000);
+        }
+        self._sendQueuedMessages();
+        util.log('Socket open');
+    };
 }
 
 /** Start XHR streaming. */
-Socket.prototype._startXhrStream = function(n) {
-  try {
-    var self = this;
-    this._http = new XMLHttpRequest();
-    this._http._index = 1;
-    this._http._streamIndex = n || 0;
-    this._http.open('post', this._httpUrl + '/id?i=' + this._http._streamIndex, true);
-    this._http.onerror = function() {
-      // If we get an error, likely something went wrong.
-      // Stop streaming.
-      clearTimeout(self._timeout);
-      self.emit('disconnected');
+Socket.prototype._startXhrStream = function (n) {
+    try {
+        var self = this;
+        this._http = new XMLHttpRequest();
+        this._http._index = 1;
+        this._http._streamIndex = n || 0;
+        this._http.open('post', this._httpUrl + '/id?i=' + this._http._streamIndex, true);
+        this._http.onerror = function () {
+            // If we get an error, likely something went wrong.
+            // Stop streaming.
+            clearTimeout(self._timeout);
+            self.emit('disconnected');
+        }
+        this._http.onreadystatechange = function () {
+            if (this.readyState == 2 && this.old) {
+                this.old.abort();
+                delete this.old;
+            } else if (this.readyState > 2 && this.status === 200 && this.responseText) {
+                self._handleStream(this);
+            }
+        };
+        this._http.send(null);
+        this._setHTTPTimeout();
+    } catch (e) {
+        util.log('XMLHttpRequest not available; defaulting to WebSockets');
     }
-    this._http.onreadystatechange = function() {
-      if (this.readyState == 2 && this.old) {
-        this.old.abort();
-        delete this.old;
-      } else if (this.readyState > 2 && this.status === 200 && this.responseText) {
-        self._handleStream(this);
-      }
-    };
-    this._http.send(null);
-    this._setHTTPTimeout();
-  } catch(e) {
-    util.log('XMLHttpRequest not available; defaulting to WebSockets');
-  }
 }
 
 
 /** Handles onreadystatechange response as a stream. */
-Socket.prototype._handleStream = function(http) {
-  // 3 and 4 are loading/done state. All others are not relevant.
-  var messages = http.responseText.split('\n');
+Socket.prototype._handleStream = function (http) {
+    // 3 and 4 are loading/done state. All others are not relevant.
+    var messages = http.responseText.split('\n');
 
-  // Check to see if anything needs to be processed on buffer.
-  if (http._buffer) {
-    while (http._buffer.length > 0) {
-      var index = http._buffer.shift();
-      var bufferedMessage = messages[index];
-      try {
-        bufferedMessage = JSON.parse(bufferedMessage);
-      } catch(e) {
-        http._buffer.shift(index);
-        break;
-      }
-      this.emit('message', bufferedMessage);
+    // Check to see if anything needs to be processed on buffer.
+    if (http._buffer) {
+        while (http._buffer.length > 0) {
+            var index = http._buffer.shift();
+            var bufferedMessage = messages[index];
+            try {
+                bufferedMessage = JSON.parse(bufferedMessage);
+            } catch (e) {
+                http._buffer.shift(index);
+                break;
+            }
+            this.emit('message', bufferedMessage);
+        }
     }
-  }
 
-  var message = messages[http._index];
-  if (message) {
-    http._index += 1;
-    // Buffering--this message is incomplete and we'll get to it next time.
-    // This checks if the httpResponse ended in a `\n`, in which case the last
-    // element of messages should be the empty string.
-    if (http._index === messages.length) {
-      if (!http._buffer) {
-        http._buffer = [];
-      }
-      http._buffer.push(http._index - 1);
-    } else {
-      try {
-        message = JSON.parse(message);
-      } catch(e) {
-        util.log('Invalid server message', message);
-        return;
-      }
-      this.emit('message', message);
+    var message = messages[http._index];
+    if (message) {
+        http._index += 1;
+        // Buffering--this message is incomplete and we'll get to it next time.
+        // This checks if the httpResponse ended in a `\n`, in which case the last
+        // element of messages should be the empty string.
+        if (http._index === messages.length) {
+            if (!http._buffer) {
+                http._buffer = [];
+            }
+            http._buffer.push(http._index - 1);
+        } else {
+            try {
+                message = JSON.parse(message);
+            } catch (e) {
+                util.log('Invalid server message', message);
+                return;
+            }
+            this.emit('message', message);
+        }
     }
-  }
 }
 
-Socket.prototype._setHTTPTimeout = function() {
-  var self = this;
-  this._timeout = setTimeout(function() {
-    var old = self._http;
-    if (!self._wsOpen()) {
-      self._startXhrStream(old._streamIndex + 1);
-      self._http.old = old;
-    } else {
-      old.abort();
-    }
-  }, 25000);
+Socket.prototype._setHTTPTimeout = function () {
+    var self = this;
+    this._timeout = setTimeout(function () {
+        var old = self._http;
+        if (!self._wsOpen()) {
+            self._startXhrStream(old._streamIndex + 1);
+            self._http.old = old;
+        } else {
+            old.abort();
+        }
+    }, 25000);
 }
 
 /** Is the websocket currently open? */
-Socket.prototype._wsOpen = function() {
-  return this._socket && this._socket.readyState == 1;
+Socket.prototype._wsOpen = function () {
+    return this._socket && this._socket.readyState == 1;
 }
 
 /** Send queued messages. */
-Socket.prototype._sendQueuedMessages = function() {
-  for (var i = 0, ii = this._queue.length; i < ii; i += 1) {
-    this.send(this._queue[i]);
-  }
+Socket.prototype._sendQueuedMessages = function () {
+    for (var i = 0, ii = this._queue.length; i < ii; i += 1) {
+        this.send(this._queue[i]);
+    }
 }
 
 /** Exposed send for DC & Peer. */
-Socket.prototype.send = function(data) {
-  if (this.disconnected) {
-    return;
-  }
+Socket.prototype.send = function (data) {
+    if (this.disconnected) {
+        return;
+    }
 
-  // If we didn't get an ID yet, we can't yet send anything so we should queue
-  // up these messages.
-  if (!this.id) {
-    this._queue.push(data);
-    return;
-  }
+    // If we didn't get an ID yet, we can't yet send anything so we should queue
+    // up these messages.
+    if (!this.id) {
+        this._queue.push(data);
+        return;
+    }
 
-  if (!data.type) {
-    this.emit('error', 'Invalid message');
-    return;
-  }
+    if (!data.type) {
+        this.emit('error', 'Invalid message');
+        return;
+    }
 
-  var message = JSON.stringify(data);
-  if (this._wsOpen()) {
-    this._socket.send(message);
-  } else {
-    var http = new XMLHttpRequest();
-    var url = this._httpUrl + '/' + data.type.toLowerCase();
-    http.open('post', url, true);
-    http.setRequestHeader('Content-Type', 'application/json');
-    http.send(message);
-  }
+    var message = JSON.stringify(data);
+    if (this._wsOpen()) {
+        this._socket.send(message);
+    } else {
+        var http = new XMLHttpRequest();
+        var url = this._httpUrl + '/' + data.type.toLowerCase();
+        http.open('post', url, true);
+        http.setRequestHeader('Content-Type', 'application/json');
+        http.send(message);
+    }
 }
 
-Socket.prototype.close = function() {
-  if (!this.disconnected && this._wsOpen()) {
-    this._socket.close();
-    this.disconnected = true;
-  }
+Socket.prototype.close = function () {
+    if (!this.disconnected && this._wsOpen()) {
+        this._socket.close();
+        this.disconnected = true;
+    }
 }
 
 module.exports = Socket;
 
-},{"./util":17,"eventemitter3":18}],17:[function(require,module,exports){
+},{"./util":15,"eventemitter3":26}],15:[function(require,module,exports){
 var defaultConfig = {'iceServers': [{ 'url': 'stun:stun.l.google.com:19302' }]};
 var dataCount = 1;
 
@@ -2171,7 +2223,978 @@ var util = {
 
 module.exports = util;
 
-},{"./adapter":11,"js-binarypack":19}],18:[function(require,module,exports){
+},{"./adapter":9,"js-binarypack":27}],16:[function(require,module,exports){
+var PlatformDummy;
+
+PlatformDummy = (function() {
+  function PlatformDummy() {
+    console.log('create PlatformDummy');
+  }
+
+  PlatformDummy.prototype.createXMLHttpRequest = function() {
+    return new XMLHttpRequest();
+  };
+
+  PlatformDummy.prototype.createSSDPResponder = function(options) {
+    throw 'Not Implemented';
+  };
+
+  PlatformDummy.prototype.createMDNSResponder = function(options) {
+    throw 'Not Implemented';
+  };
+
+  return PlatformDummy;
+
+})();
+
+module.exports = PlatformDummy;
+
+
+
+},{}],17:[function(require,module,exports){
+var Platform, PlatformDummy, PlatformFfos, PlatformLoader;
+
+PlatformDummy = require('./PlatformDummy');
+
+PlatformFfos = require('./ffos/PlatformFfos');
+
+Platform = require('../common/Platform');
+
+PlatformLoader = (function() {
+  function PlatformLoader() {}
+
+  PlatformLoader.platform = null;
+
+  PlatformLoader.getPlatform = function() {
+    var e, platform;
+    if (!PlatformLoader.platform) {
+      platform = Platform.getPlatform();
+      console.info('Platform is : ', platform.browser);
+      try {
+        switch (platform.browser) {
+          case 'ffos':
+            PlatformLoader.platform = new PlatformFfos();
+            break;
+          default:
+            PlatformLoader.platform = new PlatformDummy();
+        }
+      } catch (_error) {
+        e = _error;
+        PlatformLoader.platform = null;
+        console.error('catch: ', e);
+      }
+      if (!PlatformLoader.platform) {
+        PlatformLoader.platform = new PlatformDummy();
+      }
+    }
+    return PlatformLoader.platform;
+  };
+
+  return PlatformLoader;
+
+})();
+
+module.exports = PlatformLoader;
+
+
+
+},{"../common/Platform":5,"./PlatformDummy":16,"./ffos/PlatformFfos":18}],18:[function(require,module,exports){
+var PlatformFfos, SSDPResponder;
+
+SSDPResponder = require('./SSDPResponder');
+
+PlatformFfos = (function() {
+  function PlatformFfos() {
+    console.log('create PlatformFfos');
+  }
+
+  PlatformFfos.prototype.createXMLHttpRequest = function() {
+    return new XMLHttpRequest({
+      mozSystem: true
+    });
+  };
+
+  PlatformFfos.prototype.createSSDPResponder = function(options) {
+    return new SSDPResponder(this, options);
+  };
+
+  PlatformFfos.prototype.createMDNSResponder = function(options) {
+    throw 'Not Implemented';
+  };
+
+  return PlatformFfos;
+
+})();
+
+module.exports = PlatformFfos;
+
+
+
+},{"./SSDPResponder":19}],19:[function(require,module,exports){
+var EventEmitter, FfoxSSDPResponder, SEARCH_INTERVAL, SSDP_ADDRESS, SSDP_DISCOVER_MX, SSDP_DISCOVER_PACKET, SSDP_HEADER, SSDP_PORT, SSDP_RESPONSE_HEADER, SSDP_SEARCH_TARGET,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+EventEmitter = require('eventemitter3');
+
+SEARCH_INTERVAL = 5 * 1000;
+
+SSDP_PORT = 1900;
+
+SSDP_ADDRESS = '239.255.255.250';
+
+SSDP_DISCOVER_MX = 10;
+
+SSDP_DISCOVER_PACKET = 'M-SEARCH * HTTP/1.1\r\n' + 'HOST: ' + SSDP_ADDRESS + ':' + SSDP_PORT + '\r\n' + 'MAN: \"ssdp:discover\"\r\n' + 'MX: ' + SSDP_DISCOVER_MX + '\r\n' + 'ST: %SEARCH_TARGET%\r\n\r\n';
+
+SSDP_RESPONSE_HEADER = /HTTP\/\d{1}\.\d{1} \d+ .*/;
+
+SSDP_HEADER = /^([^:]+):\s*(.*)$/;
+
+SSDP_SEARCH_TARGET = 'urn:dial-multiscreen-org:service:dial:1';
+
+FfoxSSDPResponder = (function(_super) {
+  __extends(FfoxSSDPResponder, _super);
+
+  function FfoxSSDPResponder(pluginLoader, options) {
+    this.pluginLoader = pluginLoader;
+    this.options = options;
+    this.socket = null;
+    this.searchTimerId = null;
+    this.started = false;
+  }
+
+  FfoxSSDPResponder.prototype._init = function() {
+    this.socket = new UDPSocket({
+      loopback: true,
+      localPort: SSDP_PORT
+    });
+    this.socket.joinMulticastGroup(SSDP_ADDRESS);
+    return this.socket.onmessage = (function(_this) {
+      return function(event) {
+        var msg;
+        msg = String.fromCharCode.apply(null, new Uint8Array(event.data));
+        return _this._onData(msg);
+      };
+    })(this);
+  };
+
+  FfoxSSDPResponder.prototype.start = function() {
+    if (this.started) {
+      throw 'FfosSSDPResponder already started';
+    }
+    this.started = true;
+    this._init();
+    this.searchTimerId = setInterval(((function(_this) {
+      return function() {
+        return _this._search();
+      };
+    })(this)), SEARCH_INTERVAL);
+    return this._search();
+  };
+
+  FfoxSSDPResponder.prototype._search = function() {
+    var data, _data;
+    data = SSDP_DISCOVER_PACKET;
+    _data = data.replace('%SEARCH_TARGET%', SSDP_SEARCH_TARGET);
+    return this.socket.send(_data, SSDP_ADDRESS, SSDP_PORT);
+  };
+
+  FfoxSSDPResponder.prototype.stop = function() {
+    if (!this.started) {
+      console.warn('FfosSSDPResponder is not started');
+      return;
+    }
+    this.started = false;
+    if (this.searchTimerId) {
+      return clearInterval(this.searchTimerId);
+    }
+  };
+
+  FfoxSSDPResponder.prototype._onData = function(data) {
+    var firstLine, headers, lines, method;
+    lines = data.toString().split('\r\n');
+    firstLine = lines.shift();
+    method = SSDP_RESPONSE_HEADER.test(firstLine) ? 'RESPONSE' : firstLine.split(' ')[0].toUpperCase();
+    headers = {};
+    lines.forEach((function(_this) {
+      return function(line) {
+        var pairs;
+        if (line.length) {
+          pairs = line.match(SSDP_HEADER);
+          if (pairs) {
+            return headers[pairs[1].toLowerCase()] = pairs[2];
+          }
+        }
+      };
+    })(this));
+    if (method === 'M-SEARCH') {
+
+    } else if (method === 'RESPONSE') {
+      return this._onResponse(headers);
+    } else if (method === 'NOTIFY') {
+      return this._onNotify(headers);
+    }
+  };
+
+  FfoxSSDPResponder.prototype._onResponse = function(headers) {
+    if (headers.location && (this.options.st === headers.st)) {
+      return this.emit('serviceFound', headers.location);
+    }
+  };
+
+  FfoxSSDPResponder.prototype._onNotify = function(headers) {
+    if (headers.location && (this.options.st === headers.nt)) {
+      if (headers.nts === 'ssdp:alive') {
+        return this.emit('serviceFound', headers.location);
+      } else if (headers.nts === 'ssdp:byebye') {
+        return this.emit('serviceLost', headers.location);
+      }
+    }
+  };
+
+  return FfoxSSDPResponder;
+
+})(EventEmitter);
+
+module.exports = FfoxSSDPResponder;
+
+
+
+},{"eventemitter3":26}],20:[function(require,module,exports){
+var EventEmitter, FlintDevice,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+EventEmitter = require('eventemitter3');
+
+FlintDevice = (function(_super) {
+  __extends(FlintDevice, _super);
+
+  function FlintDevice() {
+    this.timeoutId = null;
+    this.timeout = 60 * 1000;
+    this.urlBase = null;
+    this.friendlyName = null;
+    this.uniqueId = null;
+  }
+
+  FlintDevice.prototype.getUrlBase = function() {
+    return this.urlBase;
+  };
+
+  FlintDevice.prototype.getName = function() {
+    return this.friendlyName;
+  };
+
+  FlintDevice.prototype.getUniqueId = function() {
+    return this.uniqueId;
+  };
+
+  FlintDevice.prototype.getDeviceType = function() {
+    return null;
+  };
+
+  FlintDevice.prototype.triggerTimer = function() {
+    this._clearTimer();
+    return this.timeoutId = setTimeout(((function(_this) {
+      return function() {
+        return _this._onTimeout();
+      };
+    })(this)), this.timeout);
+  };
+
+  FlintDevice.prototype.clear = function() {
+    return this._clearTimer();
+  };
+
+  FlintDevice.prototype._clearTimer = function() {
+    if (this.timeoutId) {
+      return clearTimeout(this.timeoutId);
+    }
+  };
+
+  FlintDevice.prototype._onTimeout = function() {
+    return this.emit('devicetimeout', this.uniqueId);
+  };
+
+  return FlintDevice;
+
+})(EventEmitter);
+
+module.exports = FlintDevice;
+
+
+
+},{"eventemitter3":26}],21:[function(require,module,exports){
+var EventEmitter, FlintDevice, FlintDeviceScanner, MDNSManager, SSDPManager,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+EventEmitter = require('eventemitter3');
+
+FlintDevice = require('./FlintDevice');
+
+SSDPManager = require('../discovery/ssdp/SSDPManager');
+
+MDNSManager = require('../discovery/mdns/MDNSManager');
+
+FlintDeviceScanner = (function(_super) {
+  var INTERVAL;
+
+  __extends(FlintDeviceScanner, _super);
+
+  INTERVAL = 10 * 1000;
+
+  function FlintDeviceScanner() {
+    this.devices = {};
+    this.ssdpManager = null;
+    this.mdnsManager = null;
+    this._init();
+  }
+
+  FlintDeviceScanner.prototype._init = function() {
+    this._initSSDP();
+    return this._initmDns();
+  };
+
+  FlintDeviceScanner.prototype._initSSDP = function() {
+    console.info('init SSDPManager');
+    this.ssdpManager = new SSDPManager();
+    this.ssdpManager.on('adddevice', (function(_this) {
+      return function(device) {
+        return _this._addDevice(device);
+      };
+    })(this));
+    return this.ssdpManager.on('removedevice', (function(_this) {
+      return function(uniqueId) {
+        return _this._removeDevice(uniqueId);
+      };
+    })(this));
+  };
+
+  FlintDeviceScanner.prototype._initmDns = function() {
+    console.info('init MDNSManager');
+    this.mdnsManager = new SSDPManager();
+    this.mdnsManager.on('adddevice', (function(_this) {
+      return function(device) {
+        return _this._addDevice(device);
+      };
+    })(this));
+    return this.mdnsManager.on('removedevice', (function(_this) {
+      return function(uniqueId) {
+        return _this._removeDevice(uniqueId);
+      };
+    })(this));
+  };
+
+  FlintDeviceScanner.prototype._addDevice = function(device) {
+    var uniqueId;
+    uniqueId = device.getUniqueId();
+    if (!this.devices[uniqueId]) {
+      console.log('found device: ', device.getName());
+      this.devices[uniqueId] = device;
+      device.on('devicetimeout', (function(_this) {
+        return function(_uniqueId) {
+          return _this._removeDevice(_uniqueId);
+        };
+      })(this));
+      return this.emit('devicefound', device);
+    }
+  };
+
+  FlintDeviceScanner.prototype._removeDevice = function(uniqueId) {
+    if (this.devices[uniqueId]) {
+      console.warn('found device: ', this.devices[uniqueId].getName());
+      this.emit('devicegone', this.devices[uniqueId]);
+      return delete this.devices[uniqueId];
+    }
+  };
+
+  FlintDeviceScanner.prototype.start = function() {
+    var _ref, _ref1;
+    if ((_ref = this.ssdpManager) != null) {
+      _ref.start();
+    }
+    return (_ref1 = this.mdnsManager) != null ? _ref1.start() : void 0;
+  };
+
+  FlintDeviceScanner.prototype.stop = function() {
+    var _ref, _ref1;
+    if ((_ref = this.ssdpManager) != null) {
+      _ref.stop();
+    }
+    return (_ref1 = this.mdnsManager) != null ? _ref1.stop() : void 0;
+  };
+
+  FlintDeviceScanner.prototype.getDeviceList = function() {
+    var dList, value, _, _ref;
+    dList = [];
+    _ref = this.devices;
+    for (_ in _ref) {
+      value = _ref[_];
+      dList.push(value);
+    }
+    return dList;
+  };
+
+  return FlintDeviceScanner;
+
+})(EventEmitter);
+
+module.exports = FlintDeviceScanner;
+
+
+
+},{"../discovery/mdns/MDNSManager":6,"../discovery/ssdp/SSDPManager":8,"./FlintDevice":20,"eventemitter3":26}],22:[function(require,module,exports){
+var EventEmitter, FlintConstants, FlintSenderManager, Peer, PlatformLoader, SenderMessageBus, SenderMessageChannel,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+EventEmitter = require('eventemitter3');
+
+SenderMessageChannel = require('./SenderMessageChannel');
+
+SenderMessageBus = require('./SenderMessageBus');
+
+Peer = require('../peerjs/peer');
+
+PlatformLoader = require('../platform/PlatformLoader');
+
+FlintConstants = require('../common/FlintConstants');
+
+FlintSenderManager = (function(_super) {
+  __extends(FlintSenderManager, _super);
+
+  function FlintSenderManager(appId, urlBase, useHeartbeat) {
+    this.appId = appId;
+    this.urlBase = urlBase;
+    this.useHeartbeat = useHeartbeat;
+    if (!this.appId) {
+      throw 'FlintSenderManager constructor error';
+    }
+    if (this.urlBase !== void 0) {
+      this.serviceUrl = this.urlBase + '/apps/' + this.appId;
+      this.host = this.urlBase.replace('http://', '');
+      this.host = this.host.replace(':9431', '');
+    }
+    if (this.useHeartbeat === void 0) {
+      this.useHeartbeat = true;
+    }
+    this.appState = {};
+    this.additionalData = {};
+    this.token = null;
+    this.heartbeatInterval = 3 * 1000;
+    this.heartbeatTimerId = null;
+    this.defMessageChannel = null;
+    this.messageBusList = {};
+  }
+
+  FlintSenderManager.prototype.setServiceUrl = function(urlBase) {
+    this.urlBase = urlBase;
+    this.serviceUrl = this.urlBase + '/apps/' + this.appId;
+    this.host = this.urlBase.replace('http://', '');
+    this.host = this.host.replace(':9431', '');
+    return console.log('set service url ->', this.serviceUrl);
+  };
+
+  FlintSenderManager.prototype.getAdditionalData = function() {
+    return this.additionalData['customData'];
+  };
+
+  FlintSenderManager.prototype.getState = function(callback) {
+    var headers;
+    headers = {
+      'Accept': 'application/xml; charset=utf8'
+    };
+    return this._getState(this.serviceUrl, headers, (function(_this) {
+      return function(result, state) {
+        if (typeof callback === "function") {
+          callback(result, state, _this.additionalData);
+        }
+        return _this.emit('appstate', result, state, _this.additionalData);
+      };
+    })(this));
+  };
+
+  FlintSenderManager.prototype._getState = function(url, headers, callback) {
+    return this._request('GET', url, headers, null, (function(_this) {
+      return function(statusCode, responseText) {
+        if (statusCode === 200) {
+          _this._parseState(responseText);
+          return typeof callback === "function" ? callback(true, _this.appState.state) : void 0;
+        } else {
+          return typeof callback === "function" ? callback(false, 'unknow') : void 0;
+        }
+      };
+    })(this));
+  };
+
+  FlintSenderManager.prototype._parseState = function(state) {
+    var additionalData, doc, lines, link, parser, responseText;
+    lines = state.split('\n');
+    lines.splice(0, 1);
+    responseText = lines.join('');
+    parser = new DOMParser();
+    doc = parser.parseFromString(responseText, 'text/xml');
+    this.appState.name = doc.getElementsByTagName('name')[0].innerHTML;
+    this.appState.state = doc.getElementsByTagName('state')[0].innerHTML;
+    link = doc.getElementsByTagName('link');
+    if (link && link[0]) {
+      this.appState.href = link[0].getAttribute('href');
+    }
+    additionalData = doc.getElementsByTagName('additionalData');
+    return this._parseAdditionalData(additionalData);
+  };
+
+  FlintSenderManager.prototype._parseAdditionalData = function(additionalData) {
+    var i, items, key, value, _tmpAdditionalData;
+    if ((additionalData != null ? additionalData.length : void 0) > 0) {
+      items = additionalData[0].childNodes;
+      if (items) {
+        _tmpAdditionalData = {};
+        for (i in items) {
+          if (items[i].tagName && items[i].innerHTML) {
+            _tmpAdditionalData[items[i].tagName] = items[i].innerHTML;
+          }
+        }
+        for (key in _tmpAdditionalData) {
+          value = _tmpAdditionalData[key];
+          if (this.additionalData[key] !== value) {
+            this.emit(key + 'available', value);
+          }
+        }
+        return this.additionalData = _tmpAdditionalData;
+      }
+    }
+  };
+
+  FlintSenderManager.prototype.launch = function(appInfo, callback) {
+    return this._launch('launch', appInfo, callback);
+  };
+
+  FlintSenderManager.prototype.relaunch = function(appInfo, callback) {
+    return this._launch('relaunch', appInfo, callback);
+  };
+
+  FlintSenderManager.prototype.join = function(appInfo, callback) {
+    return this._launch('join', appInfo, callback);
+  };
+
+  FlintSenderManager.prototype._onLaunchResult = function(type, result, token, callback) {
+    if (callback) {
+      callback(type, result, token);
+    } else {
+      this.emit(type, result, token);
+    }
+    if (result) {
+      console.log(type, ' is ok, getState once');
+      return setTimeout(((function(_this) {
+        return function() {
+          return _this.getState();
+        };
+      })(this)), 500);
+    } else {
+      console.log(type, ' is failed, stop heartbeat');
+      return this._stopHeartbeat();
+    }
+  };
+
+  FlintSenderManager.prototype._launch = function(launchType, appInfo, callback) {
+    var data, headers;
+    if ((launchType === 'launch') || (launchType === 'relaunch')) {
+      if ((!appInfo) || (!appInfo.appUrl)) {
+        throw 'empty appInfo or appUrl';
+      }
+    }
+    if (appInfo.useIpc === void 0) {
+      appInfo.useIpc = false;
+    }
+    if ((!appInfo.useIpc) && (appInfo.maxInactive === void 0)) {
+      appInfo.maxInactive = -1;
+    }
+    data = {
+      type: launchType,
+      app_info: {
+        url: appInfo.appUrl,
+        useIpc: appInfo.useIpc,
+        maxInactive: appInfo.maxInactive
+      }
+    };
+    headers = {
+      'Content-Type': 'application/json'
+    };
+    return this._request('POST', this.serviceUrl, headers, data, (function(_this) {
+      return function(statusCode, responseText) {
+        var content, counter, pollingCallback, _headers;
+        if ((statusCode === 200) || (statusCode === 201)) {
+          content = JSON.parse(responseText);
+          if (content && content.token && content.interval) {
+            _this.token = content.token;
+            if (content.interval <= 3000) {
+              content.interval = 3000;
+            }
+            _this.heartbeatInterval = content.interval;
+            if (_this.useHeartbeat) {
+              _this._startHeartbeat();
+            }
+            counter = 1;
+            _headers = {
+              'Accept': 'application/xml; charset=utf8',
+              'Authorization': _this.token
+            };
+            pollingCallback = function() {
+              console.log('wait for launching ', counter, ' times');
+              if (counter < 10) {
+                counter += 1;
+                return _this._getState(_this.serviceUrl, _headers, function(result, state) {
+                  if (result && (state === 'running')) {
+                    return _this._onLaunchResult('app' + launchType, true, _this.token, callback);
+                  } else {
+                    return setTimeout((function() {
+                      return pollingCallback();
+                    }), 1000);
+                  }
+                });
+              } else {
+                return _this._onLaunchResult('app' + launchType, false, null, callback);
+              }
+            };
+            return pollingCallback();
+          } else {
+            return _this._onLaunchResult('app' + launchType, false, null, callback);
+          }
+        } else {
+          return _this._onLaunchResult('app' + launchType, false, null, callback);
+        }
+      };
+    })(this));
+  };
+
+  FlintSenderManager.prototype._startHeartbeat = function() {
+    this._stopHeartbeat();
+    return this.heartbeatTimerId = setInterval(((function(_this) {
+      return function() {
+        var headers;
+        headers = {
+          'Accept': 'application/xml; charset=utf8',
+          'Authorization': _this.token
+        };
+        return _this._getState(_this.serviceUrl, headers, function(result, state) {
+          return _this.emit('appstate', result, state, _this.additionalData);
+        });
+      };
+    })(this)), this.heartbeatInterval);
+  };
+
+  FlintSenderManager.prototype._stopHeartbeat = function() {
+    if (this.heartbeatTimerId) {
+      return clearInterval(this.heartbeatTimerId);
+    }
+  };
+
+  FlintSenderManager.prototype.stop = function(appInfo, callback) {
+    var headers;
+    this._stopHeartbeat();
+    headers = {
+      'Accept': 'application/xml; charset=utf8'
+    };
+    if (this.token) {
+      headers['Authorization'] = this.token;
+    } else {
+      headers['Authorization'] = 'bad-token';
+    }
+    return this._getState(this.serviceUrl, headers, (function(_this) {
+      return function(result, state) {
+        var url;
+        if (result) {
+          if (state === 'stopped') {
+            return _this._onStop('appstop', true, callback);
+          } else {
+            url = _this.serviceUrl + '/' + _this.appState.href;
+            return _this._stop('stop', url, callback);
+          }
+        } else {
+          console.warn('stop failed, try join!');
+          return _this.join(appInfo, function(_type, _result, _token) {
+            if (_result) {
+              console.log('join ok, use token = ', _token, ' to stop!');
+              _this.token = _token;
+              url = _this.serviceUrl + '/' + _this.appState.href;
+              return _this._stop('stop', url, callback);
+            } else {
+              return _this._onStop('appstop', false, callback);
+            }
+          });
+        }
+      };
+    })(this));
+  };
+
+  FlintSenderManager.prototype.disconnect = function(callback) {
+    this._stopHeartbeat();
+    return this._stop('disconnect', this.serviceUrl, callback);
+  };
+
+  FlintSenderManager.prototype._onStop = function(type, result, callback) {
+    if (callback) {
+      return typeof callback === "function" ? callback(type, result) : void 0;
+    } else {
+      return this.emit(type, result);
+    }
+  };
+
+  FlintSenderManager.prototype._stop = function(stopType, url, callback) {
+    var headers;
+    if (!this.token) {
+      throw 'empty token, cannot stop';
+    }
+    headers = {
+      'Authorization': this.token
+    };
+    return this._request('DELETE', url, headers, null, (function(_this) {
+      return function(statusCode, responseText) {
+        _this._clean();
+        if (statusCode === 200) {
+          return _this._onStop('app' + stopType, true, callback);
+        } else {
+          return _this._onStop('app' + stopType, false, callback);
+        }
+      };
+    })(this));
+  };
+
+  FlintSenderManager.prototype._request = function(method, url, headers, data, callback) {
+    var key, value, xhr;
+    console.log('request: method -> ', method, ', url -> ', url, ', headers -> ', headers);
+    xhr = PlatformLoader.getPlatform().createXMLHttpRequest();
+    if (!xhr) {
+      throw 'request: failed';
+    }
+    xhr.open(method, url);
+    if (headers) {
+      for (key in headers) {
+        value = headers[key];
+        xhr.setRequestHeader(key, value);
+      }
+    }
+    xhr.onreadystatechange = (function(_this) {
+      return function() {
+        if (xhr.readyState === 4) {
+          console.log('FlintSenderManager received:\n', xhr.responseText);
+          return typeof callback === "function" ? callback(xhr.status, xhr.responseText) : void 0;
+        }
+      };
+    })(this);
+    if (data) {
+      return xhr.send(JSON.stringify(data));
+    } else {
+      return xhr.send('');
+    }
+  };
+
+  FlintSenderManager.prototype._createMessageChannel = function() {
+    if (!this.defMessageChannel) {
+      this.defMessageChannel = new SenderMessageChannel(PlatformLoader, FlintConstants.DEFAULT_CHANNEL_NAME);
+      this.defMessageChannel.on('open', (function(_this) {
+        return function() {
+          return console.log('sender message channel open!!!');
+        };
+      })(this));
+      this.defMessageChannel.on('close', (function(_this) {
+        return function() {
+          return console.log('sender message channel close!!!');
+        };
+      })(this));
+      this.defMessageChannel.on('error', (function(_this) {
+        return function() {
+          return console.log('sender message channel error!!!');
+        };
+      })(this));
+      this._openMessageChannel(this.defMessageChannel);
+    }
+    return this.defMessageChannel;
+  };
+
+  FlintSenderManager.prototype._openMessageChannel = function(channel) {
+    return this.once(channel.getName() + 'available', (function(_this) {
+      return function(channelUrl) {
+        var url;
+        console.log('available: ', channel.getName() + 'available');
+        url = channelUrl + '/senders/' + _this.token;
+        console.log(channel.getName(), ' open url: ', url);
+        return channel.open(url);
+      };
+    })(this));
+  };
+
+  FlintSenderManager.prototype.createMessageBus = function(namespace) {
+    var messageBus;
+    if (!namespace) {
+      namespace = FlintConstants.DEFAULT_NAMESPACE;
+    }
+    if (!this.defMessageChannel) {
+      this.defMessageChannel = this._createMessageChannel();
+    }
+    messageBus = this._createMessageBus(namespace);
+    return messageBus;
+  };
+
+  FlintSenderManager.prototype._createMessageBus = function(namespace) {
+    var messageBus;
+    messageBus = null;
+    if (this.messageBusList[namespace]) {
+      messageBus = this.messageBusList[namespace];
+    } else {
+      messageBus = new SenderMessageBus(this.defMessageChannel, namespace);
+      this.messageBusList[namespace] = messageBus;
+    }
+    return messageBus;
+  };
+
+  FlintSenderManager.prototype.createPeer = function() {
+    var peer;
+    peer = new Peer({
+      host: this.host,
+      port: '9433',
+      secure: false
+    });
+    return peer;
+  };
+
+  FlintSenderManager.prototype.connectReceiverDataPeer = function(options) {
+    var peer;
+    peer = new Peer({
+      host: this.host,
+      port: '9433',
+      secure: false
+    });
+    if (this.additionalData['dataPeerId']) {
+      peer.connect(this.additionalData['dataPeerId'], options);
+    } else {
+      this.once('dataPeerId' + 'available', (function(_this) {
+        return function(peerId) {
+          return peer.connect(peerId, options);
+        };
+      })(this));
+    }
+    return peer;
+  };
+
+  FlintSenderManager.prototype.callReceiverMediaPeer = function(stream, options) {
+    var peer;
+    peer = new Peer({
+      host: this.host,
+      port: '9433',
+      secure: false
+    });
+    if (this.additionalData['mediaPeerId']) {
+      peer.call(this.additionalData['mediaPeerId'], stream, options);
+    } else {
+      this.once('mediaPeerId' + 'available', (function(_this) {
+        return function(peerId) {
+          return peer.call(peerId, stream, options);
+        };
+      })(this));
+    }
+    return peer;
+  };
+
+  FlintSenderManager.prototype._clean = function() {
+    var _ref;
+    if ((_ref = this.defMessageChannel) != null) {
+      _ref.close();
+    }
+    this.defMessageChannel = null;
+    return this.messageBusList = null;
+  };
+
+  return FlintSenderManager;
+
+})(EventEmitter);
+
+module.exports = FlintSenderManager;
+
+
+
+},{"../common/FlintConstants":2,"../peerjs/peer":13,"../platform/PlatformLoader":17,"./SenderMessageBus":23,"./SenderMessageChannel":24,"eventemitter3":26}],23:[function(require,module,exports){
+var MessageBus, SenderMessageBus,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+MessageBus = require('../common/MessageBus');
+
+SenderMessageBus = (function(_super) {
+  __extends(SenderMessageBus, _super);
+
+  function SenderMessageBus(channel, namespace) {
+    SenderMessageBus.__super__.constructor.call(this, channel, namespace);
+  }
+
+  SenderMessageBus.prototype._init = function() {
+    return this.channel.on('message', (function(_this) {
+      return function(message) {
+        var data, e;
+        try {
+          data = JSON.parse(message);
+          if ((data.namespace === _this.namespace) && data.payload) {
+            return _this.emit('message', data.payload);
+          }
+        } catch (_error) {
+          e = _error;
+        }
+      };
+    })(this));
+  };
+
+  SenderMessageBus.prototype.send = function(data) {
+    var message;
+    message = {
+      namespace: this.namespace,
+      payload: data
+    };
+    return this.channel.send(JSON.stringify(message));
+  };
+
+  return SenderMessageBus;
+
+})(MessageBus);
+
+module.exports = SenderMessageBus;
+
+
+
+},{"../common/MessageBus":3}],24:[function(require,module,exports){
+var MessageChannel, SenderMessageChannel,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+MessageChannel = require('../common/MessageChannel');
+
+SenderMessageChannel = (function(_super) {
+  __extends(SenderMessageChannel, _super);
+
+  function SenderMessageChannel(platform, name, url) {
+    this.platform = platform;
+    SenderMessageChannel.__super__.constructor.call(this, name, url);
+  }
+
+  return SenderMessageChannel;
+
+})(MessageChannel);
+
+module.exports = SenderMessageChannel;
+
+
+
+},{"../common/MessageChannel":4}],25:[function(require,module,exports){
+window.FlintDeviceScanner = require('./FlintDeviceScanner');
+
+window.FlintSenderManager = require('./FlintSenderManager');
+
+
+
+},{"./FlintDeviceScanner":21,"./FlintSenderManager":22}],26:[function(require,module,exports){
 'use strict';
 
 /**
@@ -2214,9 +3237,10 @@ EventEmitter.prototype._events = undefined;
  */
 EventEmitter.prototype.listeners = function listeners(event) {
   if (!this._events || !this._events[event]) return [];
+  if (this._events[event].fn) return [this._events[event].fn];
 
-  for (var i = 0, l = this._events[event].length, ee = []; i < l; i++) {
-    ee.push(this._events[event][i].fn);
+  for (var i = 0, l = this._events[event].length, ee = new Array(l); i < l; i++) {
+    ee[i] = this._events[event][i].fn;
   }
 
   return ee;
@@ -2233,30 +3257,31 @@ EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
   if (!this._events || !this._events[event]) return false;
 
   var listeners = this._events[event]
-    , length = listeners.length
     , len = arguments.length
-    , ee = listeners[0]
     , args
-    , i, j;
+    , i;
 
-  if (1 === length) {
-    if (ee.once) this.removeListener(event, ee.fn, true);
+  if ('function' === typeof listeners.fn) {
+    if (listeners.once) this.removeListener(event, listeners.fn, true);
 
     switch (len) {
-      case 1: return ee.fn.call(ee.context), true;
-      case 2: return ee.fn.call(ee.context, a1), true;
-      case 3: return ee.fn.call(ee.context, a1, a2), true;
-      case 4: return ee.fn.call(ee.context, a1, a2, a3), true;
-      case 5: return ee.fn.call(ee.context, a1, a2, a3, a4), true;
-      case 6: return ee.fn.call(ee.context, a1, a2, a3, a4, a5), true;
+      case 1: return listeners.fn.call(listeners.context), true;
+      case 2: return listeners.fn.call(listeners.context, a1), true;
+      case 3: return listeners.fn.call(listeners.context, a1, a2), true;
+      case 4: return listeners.fn.call(listeners.context, a1, a2, a3), true;
+      case 5: return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
+      case 6: return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
     }
 
     for (i = 1, args = new Array(len -1); i < len; i++) {
       args[i - 1] = arguments[i];
     }
 
-    ee.fn.apply(ee.context, args);
+    listeners.fn.apply(listeners.context, args);
   } else {
+    var length = listeners.length
+      , j;
+
     for (i = 0; i < length; i++) {
       if (listeners[i].once) this.removeListener(event, listeners[i].fn, true);
 
@@ -2286,9 +3311,16 @@ EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
  * @api public
  */
 EventEmitter.prototype.on = function on(event, fn, context) {
+  var listener = new EE(fn, context || this);
+
   if (!this._events) this._events = {};
-  if (!this._events[event]) this._events[event] = [];
-  this._events[event].push(new EE( fn, context || this ));
+  if (!this._events[event]) this._events[event] = listener;
+  else {
+    if (!this._events[event].fn) this._events[event].push(listener);
+    else this._events[event] = [
+      this._events[event], listener
+    ];
+  }
 
   return this;
 };
@@ -2302,9 +3334,16 @@ EventEmitter.prototype.on = function on(event, fn, context) {
  * @api public
  */
 EventEmitter.prototype.once = function once(event, fn, context) {
+  var listener = new EE(fn, context || this, true);
+
   if (!this._events) this._events = {};
-  if (!this._events[event]) this._events[event] = [];
-  this._events[event].push(new EE(fn, context || this, true ));
+  if (!this._events[event]) this._events[event] = listener;
+  else {
+    if (!this._events[event].fn) this._events[event].push(listener);
+    else this._events[event] = [
+      this._events[event], listener
+    ];
+  }
 
   return this;
 };
@@ -2323,17 +3362,25 @@ EventEmitter.prototype.removeListener = function removeListener(event, fn, once)
   var listeners = this._events[event]
     , events = [];
 
-  if (fn) for (var i = 0, length = listeners.length; i < length; i++) {
-    if (listeners[i].fn !== fn && listeners[i].once !== once) {
-      events.push(listeners[i]);
+  if (fn) {
+    if (listeners.fn && (listeners.fn !== fn || (once && !listeners.once))) {
+      events.push(listeners);
+    }
+    if (!listeners.fn) for (var i = 0, length = listeners.length; i < length; i++) {
+      if (listeners[i].fn !== fn || (once && !listeners[i].once)) {
+        events.push(listeners[i]);
+      }
     }
   }
 
   //
   // Reset the array, or remove it completely if we have no more listeners.
   //
-  if (events.length) this._events[event] = events;
-  else this._events[event] = null;
+  if (events.length) {
+    this._events[event] = events.length === 1 ? events[0] : events;
+  } else {
+    delete this._events[event];
+  }
 
   return this;
 };
@@ -2347,7 +3394,7 @@ EventEmitter.prototype.removeListener = function removeListener(event, fn, once)
 EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
   if (!this._events) return this;
 
-  if (event) this._events[event] = null;
+  if (event) delete this._events[event];
   else this._events = {};
 
   return this;
@@ -2373,11 +3420,12 @@ EventEmitter.EventEmitter = EventEmitter;
 EventEmitter.EventEmitter2 = EventEmitter;
 EventEmitter.EventEmitter3 = EventEmitter;
 
-if ('object' === typeof module && module.exports) {
-  module.exports = EventEmitter;
-}
+//
+// Expose the module.
+//
+module.exports = EventEmitter;
 
-},{}],19:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var BufferBuilder = require('./bufferbuilder').BufferBuilder;
 var binaryFeatures = require('./bufferbuilder').binaryFeatures;
 
@@ -2898,7 +3946,7 @@ function utf8Length(str){
   }
 }
 
-},{"./bufferbuilder":20}],20:[function(require,module,exports){
+},{"./bufferbuilder":28}],28:[function(require,module,exports){
 var binaryFeatures = {};
 binaryFeatures.useBlobBuilder = (function(){
   try {
@@ -2964,7 +4012,7 @@ BufferBuilder.prototype.getBuffer = function() {
 
 module.exports.BufferBuilder = BufferBuilder;
 
-},{}],21:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 var util = require('./util');
 
 /**
@@ -3284,7 +4332,7 @@ Reliable.prototype.onmessage = function(msg) {};
 
 module.exports.Reliable = Reliable;
 
-},{"./util":22}],22:[function(require,module,exports){
+},{"./util":30}],30:[function(require,module,exports){
 var BinaryPack = require('js-binarypack');
 
 var util = {
@@ -3381,4 +4429,4 @@ var util = {
 
 module.exports = util;
 
-},{"js-binarypack":19}]},{},[10]);
+},{"js-binarypack":27}]},{},[25]);

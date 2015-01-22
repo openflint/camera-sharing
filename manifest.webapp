@@ -1,0 +1,33 @@
+{
+    "name":"Camera Mirror",
+    "description":"Camera mirror for Firefox OS",
+    "icons": {
+        "512": "/imgs/icon-512.png",
+        "128": "/imgs/icon-128.png",
+        "64": "/imgs/icon-64.png"
+    },
+    "launch_path": "/camera.html",
+    "developer": {
+        "name": "camera mirror",
+        "url": "https://openflint.github.io/screen-sharing-sample/camera.html"
+    },
+    "default_locale": "en",
+    "type": "certified",
+    "permissions": {
+        "themeable":{},
+        "storage":{},
+        "device-storage:pictures":{ "access": "readwrite" },
+        "device-storage:videos":{ "access": "readwrite" },
+        "settings":{ "access": "readonly" },
+        "camera":{},
+        "audio-capture": {},
+        "video-capture": {},
+        "geolocation":{},
+        "audio-channel-notification":{},
+        "audio-channel-content":{},
+        "feature-detection": {},
+        "udp-socket": { "description": "Used for ssdp implementation." },
+        "systemXHR": { "description": "Required to make Ajax Calls over the Network" }
+    },
+    "orientation":["portrait-primary"]
+}
