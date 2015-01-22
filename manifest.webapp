@@ -12,7 +12,7 @@
         "url": "https://openflint.github.io/screen-sharing-sample/camera.html"
     },
     "default_locale": "en",
-    "type": "certified",
+    "type": "privileged",
     "permissions": {
         "themeable":{},
         "storage":{},
