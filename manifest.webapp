@@ -1,6 +1,6 @@
 {
-    "name":"Camera Mirror",
-    "description":"Camera mirror for Firefox OS",
+    "name":"Camera Sharing",
+    "description":"Camera sharing for Firefox OS",
     "icons": {
         "512": "/imgs/icon-512.png",
         "128": "/imgs/icon-128.png",
